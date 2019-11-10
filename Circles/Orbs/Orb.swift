@@ -54,25 +54,28 @@ class Orb: SKSpriteNode {
 
         // Set sprite node's physics body and gravity properties.
         self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.width / 2)
-        self.physicsBody!.mass = CGFloat.pi * pow((self.size.width / 2), 2)
         self.physicsBody!.usesPreciseCollisionDetection = true
         self.physicsBody!.affectedByGravity = true
         self.physicsBody!.allowsRotation = false
         self.physicsBody!.isDynamic = true
         self.physicsBody!.pinned = false
         
+        // Calculate mass using volume of sphere equation.
+        self.physicsBody!.mass = (4/3) * CGFloat.pi * pow((self.size.width / 2), 3)
+
         // Set sprite node's material properties.
         self.physicsBody!.restitution = 0.8
         self.physicsBody!.linearDamping = 0.4
         self.physicsBody!.angularDamping = 1.0
         self.physicsBody!.friction = 0.0
         
-        // Set sprite node's mask values.
+        // Set sprite node's physics mask values.
         self.physicsBody!.categoryBitMask = 1
         self.physicsBody!.collisionBitMask = 1
         self.physicsBody!.fieldBitMask = 1
         self.physicsBody!.contactTestBitMask = 1
         
+        // Set sprite node's light mask values.
         self.lightingBitMask = 1
         self.shadowedBitMask = 0
         self.shadowCastBitMask = 0

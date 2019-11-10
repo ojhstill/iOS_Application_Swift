@@ -113,17 +113,14 @@ class MenuScene: SKScene {
         for node in touchedNodes {
             //... if 'menuOrbSprite' is touched, present the sandboxScene.
             if node.name == "menuOrbSprite" {
+                
+                // If the tutorial is toggled 'ON', present the tutorial overlay.
                 if tutorialActive {
-                    
-                    // Transition to sandbox scene.
-                    presentScene(named: "SandboxScene")
-                    
-//                    sleep(1)
                     
                     // Create SKView to overlay tutorial infomation.
                     let overlayView = SKView(frame: self.view!.frame)
                     
-                    // Allow transparenct and user interaction.
+                    // Allow transparency and user interaction.
                     overlayView.allowsTransparency = true
                     overlayView.isUserInteractionEnabled = true
                     
@@ -133,7 +130,11 @@ class MenuScene: SKScene {
                     
                     // Present tutorial scene to the overlay SKView.
                     overlayView.presentScene(SKScene(fileNamed: "TutorialScene"))
+                    
+                    // Transition to sandbox scene.
+                    presentScene(named: "SandboxScene")
                 }
+                // Else, just load the sandbox scene.
                 else {
                     // Transition to sandbox scene.
                     presentScene(named: "SandboxScene")
