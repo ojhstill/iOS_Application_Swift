@@ -11,9 +11,15 @@ import SpriteKit
 import GameplayKit
 import CoreMotion
 
-class TutorialScene: SKScene, SKPhysicsContactDelegate {
-    
+class TutorialScene: SKScene {
+  
     override func didMove(to view: SKView) {
+        
+        // Set the scale mode to scale to fit the SKView.
+        self.scaleMode = .resizeFill
+        
+        // Setup user interaction.
+        self.isUserInteractionEnabled = true
         
         print("[TutorialScene.swift] Tutorial Scene Active")
     }

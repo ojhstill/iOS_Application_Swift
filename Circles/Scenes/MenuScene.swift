@@ -17,6 +17,9 @@ class MenuScene: SKScene {
     /* init() */
     override func didMove(to view: SKView) {
         
+        // Set the scale mode to scale to fit the SKView.
+        self.scaleMode = .resizeFill
+        
         // Initialise tutorialActive boolean to false.
         tutorialActive = false
         
@@ -91,9 +94,9 @@ class MenuScene: SKScene {
             transition.pausesOutgoingScene = false
             
             // Wait for 1 second to allow animation to finish.
-            sleep(1)
+//            sleep(1)
             
-            // Present sandboxScene to the SKView.
+            // Present scene to the SKView.
             self.view!.presentScene(scene, transition: transition)
         }
     }
@@ -111,9 +114,28 @@ class MenuScene: SKScene {
             //... if 'menuOrbSprite' is touched, present the sandboxScene.
             if node.name == "menuOrbSprite" {
                 if tutorialActive {
-                    presentScene(named: "TutorialScene")
+                    
+                    // Transition to sandbox scene.
+                    presentScene(named: "SandboxScene")
+                    
+//                    sleep(1)
+                    
+                    // Create SKView to overlay tutorial infomation.
+                    let overlayView = SKView(frame: self.view!.frame)
+                    
+                    // Allow transparenct and user interaction.
+                    overlayView.allowsTransparency = true
+                    overlayView.isUserInteractionEnabled = true
+                    
+                    // Add overlay SKView as a subview to main SKView and bring to front.
+                    self.view!.addSubview(overlayView)
+                    self.view!.bringSubviewToFront(overlayView)
+                    
+                    // Present tutorial scene to the overlay SKView.
+                    overlayView.presentScene(SKScene(fileNamed: "TutorialScene"))
                 }
                 else {
+                    // Transition to sandbox scene.
                     presentScene(named: "SandboxScene")
                 }
             }
@@ -124,12 +146,12 @@ class MenuScene: SKScene {
                     if tutorialActive {
                         label.text = "TUTORIAL OFF"
                         tutorialActive = false
-                        print("[MenuScene.swift] Msg - Tutorial set OFF")
+                        print("[MenuScene.swift] Tutorial set OFF")
                     }
                     else {
                         label.text = "TUTORIAL ON"
                         tutorialActive = true
-                        print("[MenuScene.swift] Msg - Tutorial set ON")
+                        print("[MenuScene.swift] Tutorial set ON")
                     }
                 }
             }

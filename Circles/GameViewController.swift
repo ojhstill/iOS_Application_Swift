@@ -9,24 +9,26 @@
 import SpriteKit
 
 class GameViewController: UIViewController {
-
+    
     var currentScene: SKScene!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
-            
+                        
             // Load the SKScene from 'GameScene.sks'
             if let menuScene = SKScene(fileNamed: "MenuScene") {
-                // Set the scale mode to scale to fit the window
-                menuScene.scaleMode = .aspectFill
                 
-                // Present the scene
+                // Present the main menuScene.
                 view.presentScene(menuScene)
                 
+                // Update the current scene to menuScene.
                 currentScene = menuScene
             }
+            
+            // Allow transparency for tutorial scene overlay.
+            view.allowsTransparency = false
             
             // DEBUG TOOLS
             view.ignoresSiblingOrder = true

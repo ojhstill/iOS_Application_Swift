@@ -25,8 +25,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     
     override func didMove(to view: SKView) {
         
-        // Setup screen and simulation physics.
+        // Set the scale mode to scale to fit the SKView.
         self.scaleMode = .resizeFill
+        
+        // Setup the physics properties and user interaction.
         self.physicsWorld.contactDelegate = self
         self.isUserInteractionEnabled = true
         
