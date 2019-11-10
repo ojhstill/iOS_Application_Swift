@@ -24,7 +24,7 @@ class GameViewController: UIViewController {
                 view.presentScene(menuScene)
                 
                 // Update the current scene to menuScene.
-                currentScene = menuScene
+//                currentScene = menuScene
             }
             
             // Allow transparency for tutorial scene overlay.

@@ -23,6 +23,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     var orbGraphicArray:        [SKSpriteNode]!
     var orbSelected:            String!
     
+    // Define tutorial varibles.
+    var tutorialOverlay:        SKNode!
+    var tutorialActive:         Bool!
+    var tutorialState:          Int!
+    
     override func didMove(to view: SKView) {
         
         // Set the scale mode to scale to fit the SKView.
@@ -60,6 +65,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
 //        view.addGestureRecognizer(doubleTap)
         
         print("[SandboxScene.swift] Sandbox Scene Active")
+        
+        if tutorialActive {
+            startTutorialSequence()
+        }
     }
     
     @objc func pinchRecognised(pinch: UIPinchGestureRecognizer) {
@@ -147,12 +156,110 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             // Add new orb's synth to the audio mixer.
             newOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
             
-            print("[GameScene.swift] Orb Spawned at x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y)) of size: \(Int(newOrb.size.width)) and mass: \(Int(newOrb.physicsBody!.mass))")
+            print("[SandboxScene.swift] Orb Spawned at x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y)) of size: \(Int(newOrb.size.width)) and mass: \(Int(newOrb.physicsBody!.mass))")
         }
         
         if pinch.state == .cancelled {
-            print("[GameScene.swift] Orb cancelled.")
+            print("[SandboxScene.swift] Orb cancelled.")
+        }
+    }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * TUTORIAL FUNCTIONS  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func setTutorialActive(bool: Bool) {
+        tutorialActive = bool
+    }
+    
+    private func startTutorialSequence() {
+        
+        tutorialOverlay = self.childNode(withName: "tutorialSceneNode")
+        
+        // Get 'tutorialGuideLabel' SKLabelNode from tutorialSceneNode.
+        if let label = tutorialOverlay.childNode(withName: "tutorialGuideLabel") as? SKLabelNode {
+            // Fade in and pulse label.
+            label.alpha = 0.0
+            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale125", duration: 2)!))
+            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                         SKAction.fadeIn(withDuration: 3)]))
+        }
+        
+        // Get 'menuTutorialLabel' SKLabelNode from tutorialSceneNode.
+        if let label = tutorialOverlay.childNode(withName: "tutorialSkipLabel") as? SKLabelNode {
+            // Fade in and pulse label.
+            label.alpha = 0.0
+            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
+            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                         SKAction.fadeIn(withDuration: 3)]))
+        }
+        
+        
+//        if let label = tutorialOverlay.childNode(withName: "tutorialInfoLabel") as? SKLabelNode {
+//            tutorialInfoLabel = NSMutableAttributedString(string: "WELCOME TO CIRCLES!  THE INTERACTIVE AUDIO SOUNDSCAPE.", attributes: label.attributedText?.attributes(at: 0, effectiveRange: nil))
+//
+//            print("\(String(describing: label.attributedText?.attributes(at: 0, effectiveRange: nil)))")
+//            label.attributedText = tutorialInfoLabel
+//            //                    tutorialInfoLabel = label.attributedText as? NSMutableAttributedString
+//        }
+        
+
+        // Set tutorial state to 0 and initalise the sequence.
+        tutorialState = 0
+        tutorialSequence()
+    }
+    
+    private func tutorialPromptToggle() {
+        if let tutorialOverlay = self.childNode(withName: "tutorialSceneNode") {
+            
+            if tutorialOverlay.alpha == 0 {
+                // Fade in overlay.
+                tutorialOverlay.run(SKAction.fadeIn(withDuration: 1))
+                tutorialOverlay.isUserInteractionEnabled = true
+            }
+            else if tutorialOverlay.alpha == 1 {
+                // Fade out overlay.
+                tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
+                tutorialOverlay.isUserInteractionEnabled = false
+            }
         }
     }
     
+    private func tutorialSequence() {
+        
+        print("[SandboxScene.swift] Tutorial State \(tutorialState!).")
+        
+        switch tutorialState! {
+            case 0: // Welcome screen.
+                tutorialPromptToggle()
+//            case 1:
+//                tutorialInfoLabel.mutableString.setString("NEW STRING")
+            default:
+                break
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Guard to ignore all other touches if multiple touches are registered.
+        guard let touch = touches.first else { return }
+        
+        // Find the location and nodes of the first touch.
+        let location = touch.location(in: self)
+        let touchedNodes = nodes(at: location)
+        
+        // Within the touchedNodes array, ...
+        for node in touchedNodes {
+            //... if 'tutorialSkipLabel' is touched, ...
+            if node.name == "tutorialSkipLabel" {
+                // ... reset tutorial sequence and fade tutorial overlay out.
+                tutorialState = 99
+                tutorialPromptToggle()
+            }
+            // Else, if 'tutorialSceneNode' is touched, ...
+            else if node.name == "tutorialSceneNode" {
+                // ... adavance tutorial sequence.
+                tutorialState += 1
+            }
+        }
+        tutorialSequence()
+    }
 }

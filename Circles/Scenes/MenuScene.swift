@@ -70,10 +70,10 @@ class MenuScene: SKScene {
         }
     }
     
-    private func presentScene(named: String) {
+    private func presentSandboxScene() {
             
         // Load the SKScene from 'SandboxScene.sks'
-        if let scene = SKScene(fileNamed: "\(named)") {
+        if let scene = SandboxScene(fileNamed: "SandboxScene") {
             
             // Get 'menuOrbSprite' SKSpriteNode from menuScene.
             if let sprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
@@ -88,6 +88,9 @@ class MenuScene: SKScene {
                     label.run(SKAction.fadeOut(withDuration: 1))
                 }
             }
+            
+            // If the tutorial is toggled 'ON', present the tutorial overlay.
+            scene.setTutorialActive(bool: tutorialActive)
             
             // Create SKTransition to crossfade between scenes.
             let transition = SKTransition.crossFade(withDuration: 3)
@@ -114,31 +117,21 @@ class MenuScene: SKScene {
             //... if 'menuOrbSprite' is touched, present the sandboxScene.
             if node.name == "menuOrbSprite" {
                 
-                // If the tutorial is toggled 'ON', present the tutorial overlay.
-                if tutorialActive {
-                    
-                    // Create SKView to overlay tutorial infomation.
-                    let overlayView = SKView(frame: self.view!.frame)
-                    
-                    // Allow transparency and user interaction.
-                    overlayView.allowsTransparency = true
-                    overlayView.isUserInteractionEnabled = true
-                    
-                    // Add overlay SKView as a subview to main SKView and bring to front.
-                    self.view!.addSubview(overlayView)
-                    self.view!.bringSubviewToFront(overlayView)
-                    
-                    // Present tutorial scene to the overlay SKView.
-                    overlayView.presentScene(SKScene(fileNamed: "TutorialScene"))
-                    
-                    // Transition to sandbox scene.
-                    presentScene(named: "SandboxScene")
-                }
-                // Else, just load the sandbox scene.
-                else {
-                    // Transition to sandbox scene.
-                    presentScene(named: "SandboxScene")
-                }
+                /*
+                // Create SKView to overlay tutorial infomation.
+                let overlayView = SKView(frame: self.view!.frame)
+                
+                // Allow transparency and user interaction.
+                overlayView.allowsTransparency = true
+                overlayView.isUserInteractionEnabled = true
+                
+                // Add overlay SKView as a subview to main SKView and bring to front.
+                self.view!.addSubview(overlayView)
+                self.view!.bringSubviewToFront(overlayView)
+                */
+                
+                // Transition to sandbox scene.
+                presentSandboxScene()
             }
             //... if 'menuTutorialLabel' is touched, toggle the tutorialActive boolean and update label.
             else if node.name == "menuTutorialLabel" {
