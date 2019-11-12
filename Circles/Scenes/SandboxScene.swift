@@ -28,10 +28,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     
     // Define TutorialScene varibles.
     private var tutorialActive:             Bool!
-    private var tutorialOverlay:            SKNode!
-    private var tutorialInfoLabel:          SKLabelNode!
-    private var tutorialNextInfoLabel:      NSMutableAttributedString!
-    private var tutorialSequenceState:      Int!
+    private var tutorialScene:              TutorialScene!
+    
     
     /* INIT() */
     
@@ -66,7 +64,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         orbSelected = "blue"
         
         // Create BlueOrb in the centre of the scene to transition from MenuScene.
-        let startingOrb = BlueOrb(position: CGPoint(x: 380, y: -500), size: CGSize(width: 300, height: 300))
+        let startingOrb = BlueOrb(position: CGPoint(x: frame.width / 2, y: 0 - (frame.height / 2)), size: CGSize(width: 300, height: 300))
         
         // Setup starting orb.
         orbArray.append(startingOrb)
@@ -84,7 +82,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         print("[SandboxScene.swift] Sandbox scene active.")
         
         // If the tutorial is set 'true', start the tutorial sequence.
-        if tutorialActive { startTutorialSequence() }
+        if tutorialActive { tutorialScene = TutorialScene(sandbox: self) }
     }
     
     @objc func pinchRecognised(pinch: UIPinchGestureRecognizer) {
@@ -179,102 +177,18 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * TUTORIAL FUNCTIONS  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    public func setTutorialActive(bool: Bool) {
+    public func setTutorialActive(_ bool: Bool) {
         tutorialActive = bool
-    }
-    
-    private func startTutorialSequence() {
-        
-        tutorialOverlay = self.childNode(withName: "tutorialSceneNode")
-        tutorialInfoLabel = tutorialOverlay.childNode(withName: "tutorialInfoLabel") as? SKLabelNode
-        
-        
-        // Get 'tutorialGuideLabel' SKLabelNode from tutorialSceneNode.
-        if let label = tutorialOverlay.childNode(withName: "tutorialGuideLabel") as? SKLabelNode {
-            // Fade in and pulse label.
-            label.alpha = 0.0
-            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale125", duration: 2)!))
-            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                         SKAction.fadeIn(withDuration: 3)]))
-        }
-        
-        // Get 'menuTutorialLabel' SKLabelNode from tutorialSceneNode.
-        if let label = tutorialOverlay.childNode(withName: "tutorialSkipLabel") as? SKLabelNode {
-            // Fade in and pulse label.
-            label.alpha = 0.0
-            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
-            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                         SKAction.fadeIn(withDuration: 3)]))
-        }
- 
-        
-        tutorialNextInfoLabel = NSMutableAttributedString(string: tutorialInfoLabel.attributedText!.string, attributes: tutorialInfoLabel.attributedText!.attributes(at: 0, effectiveRange: nil))
-            
-        tutorialInfoLabel.attributedText = tutorialNextInfoLabel
-        
-        tutorialOverlay.alpha = 0.0
-        
-        // Initalise the tutorial sequence.
-        tutorialSequenceState = 0
-        tutorialSequence()
-    }
-    
-    private func tutorialPromptToggle() {
-        
-        // If the tutorial overlay is off, ...
-        if tutorialOverlay.alpha == 0 {
-            // ... fade in overlay.
-            tutorialOverlay.run(SKAction.fadeIn(withDuration: 1))
-        }
-        // Else, if the tutorial overlay is on, ...
-        else if tutorialOverlay.alpha == 1 {
-            // ... fade out overlay.
-            tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
-        }
-    }
-    
-    private func tutorialSequence() {
-        
-        print("[SandboxScene.swift] Tutorial state \(tutorialSequenceState!).")
-        
-        // Switch-Case to keep track of the tutorial sequenece, including triggering the overlay and setting the text.
-        switch tutorialSequenceState! {
-            case 0: // Overlay with welcome text.
-                tutorialPromptToggle()
-            case 1:
-                tutorialNextInfoLabel.mutableString.setString("TEST")
-                tutorialInfoLabel.attributedText = tutorialNextInfoLabel
-            default:
-                break
-        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
         
-        // Find the location and nodes of the first touch.
-        let location = touch.location(in: self)
-        let touchedNodes = nodes(at: location)
-        
-        for node in touchedNodes {
-            if node.name == "tutorialSceneNode" {
-                let location = touch.location(in: node)
-                let tutorialNodes = nodes(at: location)
-                
-                for node in tutorialNodes {
-                    if node.name == "tutorialSkipLabel" {
-                        // ... reset tutorial sequence and fade out tutorial overlay.
-                        tutorialSequenceState = 0
-                        tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
-                        return
-                    }
-                }
-                
-                tutorialSequenceState += 1
-                tutorialSequence()
-                break
-            }
-        }
+        if tutorialActive { tutorialScene.overlayTouched(touch, with: event) }
+    }
+    
+    override func update(_ currentTime: TimeInterval) {
+        //tutorialScene.readyToAdvance
     }
 }

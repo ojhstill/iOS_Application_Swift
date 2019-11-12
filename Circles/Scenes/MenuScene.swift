@@ -92,7 +92,7 @@ class MenuScene: SKScene {
             }
             
             // If the tutorial is toggled 'ON', present the tutorial overlay.
-            scene.setTutorialActive(bool: tutorialActive)
+            scene.setTutorialActive(tutorialActive)
             
             // Create SKTransition to crossfade between scenes.
             let transition = SKTransition.crossFade(withDuration: 3)

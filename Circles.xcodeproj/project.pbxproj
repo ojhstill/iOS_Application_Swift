@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		FE178FA023770C9200B4E24E /* TutorialScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE178F9F23770C9200B4E24E /* TutorialScene.swift */; };
-		FE178FA223770CCB00B4E24E /* TutorialScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = FE178FA123770CCB00B4E24E /* TutorialScene.sks */; };
 		FE178FA823770F5000B4E24E /* AudioKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE178FA523770F4900B4E24E /* AudioKit.framework */; };
 		FE178FA923770F5000B4E24E /* AudioKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = FE178FA523770F4900B4E24E /* AudioKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		FE178FAA23770F5000B4E24E /* AudioKitUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE178FA423770F4300B4E24E /* AudioKitUI.framework */; };
@@ -48,7 +47,6 @@
 
 /* Begin PBXFileReference section */
 		FE178F9F23770C9200B4E24E /* TutorialScene.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TutorialScene.swift; sourceTree = "<group>"; };
-		FE178FA123770CCB00B4E24E /* TutorialScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = TutorialScene.sks; sourceTree = "<group>"; };
 		FE178FA423770F4300B4E24E /* AudioKitUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKitUI.framework; sourceTree = "<group>"; };
 		FE178FA523770F4900B4E24E /* AudioKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AudioKit.framework; sourceTree = "<group>"; };
 		FE178FAE23770FFC00B4E24E /* BlueOrb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BlueOrb.swift; sourceTree = "<group>"; };
@@ -92,7 +90,6 @@
 				FE5F00892374E7530065353C /* SandboxScene.swift */,
 				FE3C0A0223746BD600DB8F0D /* SandboxScene.sks */,
 				FE178F9F23770C9200B4E24E /* TutorialScene.swift */,
-				FE178FA123770CCB00B4E24E /* TutorialScene.sks */,
 			);
 			path = Scenes;
 			sourceTree = "<group>";
@@ -216,7 +213,6 @@
 				FE3C0A0323746BD600DB8F0D /* SandboxScene.sks in Resources */,
 				FE3C0A0E23746BD600DB8F0D /* Assets.xcassets in Resources */,
 				FE3C0A1123746BD700DB8F0D /* LaunchScreen.storyboard in Resources */,
-				FE178FA223770CCB00B4E24E /* TutorialScene.sks in Resources */,
 				FE3C0A0523746BD600DB8F0D /* Actions.sks in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
