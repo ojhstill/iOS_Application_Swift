@@ -11,10 +11,12 @@ import SpriteKit
 
 class MenuScene: SKScene {
     
-    /* Class Varibles */
-    var tutorialActive: Bool!
+    /* CLASS VARIABLES */
     
-    /* init() */
+    private var tutorialActive: Bool!
+    
+    /* INIT() */
+    
     override func didMove(to view: SKView) {
         
         // Set the scale mode to scale to fit the SKView.
@@ -26,7 +28,7 @@ class MenuScene: SKScene {
         // Call private function to animate static menuScene.
         animateMenuScreen(in: view)
         
-        print("[MenuScene.swift] Menu Scene Active")
+        print("[MenuScene.swift] Menu scene active.")
     }
     
     private func animateMenuScreen(in view: SKView) {
@@ -96,9 +98,6 @@ class MenuScene: SKScene {
             let transition = SKTransition.crossFade(withDuration: 3)
             transition.pausesOutgoingScene = false
             
-            // Wait for 1 second to allow animation to finish.
-//            sleep(1)
-            
             // Present scene to the SKView.
             self.view!.presentScene(scene, transition: transition)
         }
@@ -132,6 +131,7 @@ class MenuScene: SKScene {
                 
                 // Transition to sandbox scene.
                 presentSandboxScene()
+                break
             }
             //... if 'menuTutorialLabel' is touched, toggle the tutorialActive boolean and update label.
             else if node.name == "menuTutorialLabel" {
@@ -140,14 +140,15 @@ class MenuScene: SKScene {
                     if tutorialActive {
                         label.text = "TUTORIAL OFF"
                         tutorialActive = false
-                        print("[MenuScene.swift] Tutorial set OFF")
+                        print("[MenuScene.swift] Tutorial set off.")
                     }
                     else {
                         label.text = "TUTORIAL ON"
                         tutorialActive = true
-                        print("[MenuScene.swift] Tutorial set ON")
+                        print("[MenuScene.swift] Tutorial set on.")
                     }
                 }
+                break
             }
         }
     }

@@ -13,6 +13,7 @@ import AudioKit
 class Orb: SKSpriteNode {
     
     var orbSynth: OrbSynth!
+    var lightNode: SKLightNode!
     
     /* Designated 'init' function */
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
@@ -23,11 +24,11 @@ class Orb: SKSpriteNode {
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
         
         // Create SKLightNode
-        let lightNode = SKLightNode()
-        lightNode.position = CGPoint(x: self.size.height / 2, y: self.size.height / 2)
+        lightNode = SKLightNode()
+        lightNode.position = .zero
         lightNode.categoryBitMask = 1
         lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
-        lightNode.falloff = 7
+        lightNode.falloff = 11
         lightNode.isEnabled = true
         self.addChild(lightNode)
         
