@@ -24,10 +24,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     private var orbSelected:                String!
     private var orbProperties:              (position: CGPoint, size: CGSize)!
     private var orbGraphicArray:            [SKSpriteNode]!
-    private var orbArray:                   [Orb]!
+    public  var orbArray:                   [Orb]!
+    public  var hasOrbCollided:              Bool!
     
     // Define TutorialScene varibles.
-    private var tutorialActive:             Bool!
+    private var tutorialIsActive:           Bool!
     private var tutorialScene:              TutorialScene!
     
     
@@ -62,6 +63,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         orbGraphicArray = [SKSpriteNode]()
         orbProperties = (CGPoint(x: 0.0, y: 0.0), CGSize(width: 0.0, height: 0.0))
         orbSelected = "blue"
+        hasOrbCollided = false
         
         // Create BlueOrb in the centre of the scene to transition from MenuScene.
         let startingOrb = BlueOrb(position: CGPoint(x: frame.width / 2, y: 0 - (frame.height / 2)), size: CGSize(width: 300, height: 300))
@@ -82,7 +84,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         print("[SandboxScene.swift] Sandbox scene active.")
         
         // If the tutorial is set 'true', start the tutorial sequence.
-        if tutorialActive { tutorialScene = TutorialScene(sandbox: self) }
+        if tutorialIsActive { tutorialScene = TutorialScene(sandbox: self) }
     }
     
     @objc func pinchRecognised(pinch: UIPinchGestureRecognizer) {
@@ -173,22 +175,134 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             print("[SandboxScene.swift] Orb cancelled.")
         }
     }
+    
+    @objc func tapRecognised(tap: UITapGestureRecognizer) {
+        guard tap.view != nil else { return }
+        tap.numberOfTapsRequired = 2
+        
+        // After the second tap in the same area...
+        if tap.state == .ended {
+            print("Double Tap")
+            
+            // Index through each orb within the orb array.
+            var i = 0
+            for orb in orbArray {
+                // If the position on the gesture is inside the area of one of the orbs...
+                if sqrt(pow(tap.location(in: tap.view).x - orb.position.x, 2) + pow((0.0 - tap.location(in: tap.view).y) - orb.position.y, 2)) < (orb.size.width / 2) {
+                    // ... remove the orb within the array.
+                    orbArray.remove(at: i)
+                    
+                    // Disconnect from audio manager and scene.
+                    orb.orbSynth.disconnectOrbSynthOutput()
+                    orb.removeFromParent()
+                    orb.removeAllActions()
+                    
+                    print("[GameScene.swift] Orb removed - Array count at \(orbArray.count)")
+                    
+                    // Stop cycling through array.
+                    break
+                }
+                i += 1
+            }
+        }
+    }
+    
+    func didBegin(_ contact: SKPhysicsContact) {
+        let bodyA = contact.bodyA.node! as! SKSpriteNode
+        let bodyB = contact.bodyB.node! as! SKSpriteNode
+        
+        // Scale impulse of collision to around the velocity range.
+        var velocity = Int(contact.collisionImpulse / 30000)
+        
+        // Normalise velocity value for UInt8 MIDI data.
+        if velocity > 127 {
+            velocity = 127
+        }
+        
+        // Trigger soundscape if collision inpulse is significant enough.
+        // (Prevents notes playing when contact bodies are rolling.)
+        if velocity >= 10 {
+            
+            print("Collision between \(bodyA.name!) and \(bodyB.name!)")
+            
+            // If a BLUE and BLUE orb collide - SOFT REVERB
+            if bodyA.name == "blueOrb" && bodyB.name == "blueOrb" {
+                
+                hasOrbCollided = true
+                
+                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
+                
+                if let orb = bodyA as? Orb {
+                    orb.orbSynth.reverb.dryWetMix = 0.9
+                    orb.orbSynth.delay.dryWetMix = 0.0
+                    orb.orbSynth.tremolo.depth = 0.1
+                    orb.orbSynth.tremolo.frequency = 2.0
+                    orb.play(velocity: UInt8(velocity))
+                }
+            }
+                // Else if a RED and BLUE orb collide - SOFT DELAY
+            else if (bodyA.name == "redOrb" && bodyB.name == "blueOrb") || (bodyA.name == "blueOrb" && bodyB.name == "redOrb") {
+                
+                hasOrbCollided = true
+                
+                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
+                
+                //if Int.random(in: 0 ... 1) == 0 {
+                if let orb = bodyA as? Orb {
+                    orb.orbSynth.reverb.dryWetMix = 0.5
+                    orb.orbSynth.delay.dryWetMix = 1.0
+                    orb.orbSynth.tremolo.depth = 0.7
+                    orb.orbSynth.tremolo.frequency = 4.0
+                    orb.play(velocity: UInt8(velocity))
+                }
+                //}
+                //else {
+                if let orb = bodyB as? Orb {
+                    orb.orbSynth.reverb.dryWetMix = 0.5
+                    orb.orbSynth.delay.dryWetMix = 1.0
+                    orb.orbSynth.tremolo.depth = 0.7
+                    orb.orbSynth.tremolo.frequency = 4.0
+                    orb.play(velocity: UInt8(velocity))
+                }
+                //}
+            }
+                // Else if a RED and Red collide - HARD DELAY
+            else if bodyA.name == "redOrb" && bodyB.name == "redOrb" {
+                
+                hasOrbCollided = true
+                
+                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
+                
+                if let orb = bodyA as? Orb {
+                    orb.orbSynth.reverb.dryWetMix = 0.3
+                    orb.orbSynth.delay.dryWetMix = 0.7
+                    orb.orbSynth.tremolo.depth = 1.0
+                    orb.orbSynth.tremolo.frequency = 8.0
+                    orb.play(velocity: UInt8(velocity))
+                }
+            }
+        }
+    }
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * TUTORIAL FUNCTIONS  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     public func setTutorialActive(_ bool: Bool) {
-        tutorialActive = bool
+        tutorialIsActive = bool
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
         
-        if tutorialActive { tutorialScene.overlayTouched(touch, with: event) }
+        if tutorialIsActive { tutorialScene.overlayTouched(touch, with: event) }
     }
     
     override func update(_ currentTime: TimeInterval) {
-        //tutorialScene.readyToAdvance
+        if tutorialIsActive {
+            tutorialScene.update()
+        }
+        
+        hasOrbCollided = false
     }
 }

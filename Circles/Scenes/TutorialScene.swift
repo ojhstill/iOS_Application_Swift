@@ -23,13 +23,20 @@ class TutorialScene {
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
                                 2 : "IN THE CENTRE IS AN ORB - THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
                                 3 : "ORBS ARE EFFECTED BY GRAVITY - TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
-                                4 : "",
-                                5 : "",
-                                6 : "",
-                                7 : "",
-                                8 : "",
-                                9 : "",
-                                10: ""]
+                                5 : "GREAT! NOW LET'S ADD ANOTHER ORB.",
+                                6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB - YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
+                                8 : "PERFECT! ORBS ALSO HAVE THEIR OWN SOUNDS AND EFFECTS.",
+                                9 : "LET'S TILT THE SCREEN TO MAKE THE ORBS COLLIDE AND LISTEN TO WHAT HAPPENS... ",
+                                11: "WOAH! HEAR THAT?",
+                                12: "",
+                                13: "",
+                                14: "",
+                                15: "",
+                                16: "",
+                                17: "",
+                                18: "",
+                                19: "",
+                                20: ""]
     
     init(sandbox: SandboxScene) {
         
@@ -68,7 +75,7 @@ class TutorialScene {
         
         // Initalise the tutorial sequence.
         sequenceState = 0
-        readyToAdvance = true
+        readyToAdvance = false
         tutorialSequence()
     }
     
@@ -93,12 +100,12 @@ class TutorialScene {
         // Switch-Case to keep track of the tutorial sequenece, including triggering the overlay and setting the text.
         switch sequenceState! {
             
-        case 0: // Overlay with welcome text.
+        case 0: // Welcome screen.
+            readyToAdvance = true
             toggleTutorialOverlay()
-        case 4:
+        case 4, 7, 10: // Tutorial prompts.
             readyToAdvance = false
             toggleTutorialOverlay()
-            waitForUser(at: sequenceState)
         default:
             nextInfoLabel.mutableString.setString(tutorialText[sequenceState]!)
             currentInfoLabel.attributedText = nextInfoLabel
@@ -128,17 +135,30 @@ class TutorialScene {
     private func waitForUser(at tutorialState: Int) {
         switch tutorialState {
         case 4:
-            //if sandboxScene!.physicsWorld > 4 {
+            let gravity = sandboxScene.physicsWorld.gravity
+            if abs(gravity.dx) > 5.0 || abs(gravity.dy) > 5.0 {
                 readyToAdvance = true
-                sequenceState += 1
-                tutorialSequence() // ***********
-            //}
+            }
+        case 7:
+            if sandboxScene.orbArray.count > 1 {
+                readyToAdvance = true
+            }
+        case 10:
+            if sandboxScene.hasOrbCollided {
+                readyToAdvance = true
+            }
         default:
-            break
+            return
+        }
+        
+        if readyToAdvance && tutorialOverlay.alpha == 0 {
+            toggleTutorialOverlay()
+            sequenceState += 1
+            tutorialSequence()
         }
     }
     
-    public func setTutorialReadyToAdvance(_ bool: Bool) {
-        readyToAdvance = bool
+    public func update() {
+        waitForUser(at: sequenceState)
     }
 }
