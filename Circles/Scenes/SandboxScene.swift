@@ -19,15 +19,19 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     public var motionManager:               CMMotionManager!
     public var audioManager:                AudioManager!
     
-    // Define SandboxScene varibles.
+    // Define sandbox scene varibles.
     private var sandboxScene:               SKNode!
     private var orbSelected:                String!
     private var orbProperties:              (position: CGPoint, size: CGSize)!
     private var orbGraphicArray:            [SKSpriteNode]!
     public  var orbArray:                   [Orb]!
-    public  var hasOrbCollided:              Bool!
+    public  var hasOrbCollided:             Bool!
     
-    // Define TutorialScene varibles.
+    // Define control panel varibles.
+    private var controlPanel:               SKNode!
+    public  var controlPanelActive:         Bool!
+    
+    // Define tutorial scene varibles.
     private var tutorialIsActive:           Bool!
     private var tutorialScene:              TutorialScene!
     
@@ -65,6 +69,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         orbSelected = "blue"
         hasOrbCollided = false
         
+        // Setup control panel.
+        controlPanel = self.childNode(withName: "controlPanelNode")
+        controlPanelActive = false
+        
         // Create BlueOrb in the centre of the scene to transition from MenuScene.
         let startingOrb = BlueOrb(position: CGPoint(x: frame.width / 2, y: 0 - (frame.height / 2)), size: CGSize(width: 300, height: 300))
         
@@ -78,8 +86,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         view.addGestureRecognizer(pinch)
         
         // Add double tap gesture.
-//        let doubleTap = UITapGestureRecognizer(target: scene, action: #selector(tapRecognised(tap:)))
-//        view.addGestureRecognizer(doubleTap)
+        let doubleTap = UITapGestureRecognizer(target: scene, action: #selector(tapRecognised(tap:)))
+        view.addGestureRecognizer(doubleTap)
         
         print("[SandboxScene.swift] Sandbox scene active.")
         
@@ -291,11 +299,43 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         tutorialIsActive = bool
     }
     
+    private func toggleControlPanel() {
+        if let icon = sandboxScene.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
+        
+            if controlPanelActive {
+                icon.texture = SKTexture(imageNamed: "icons_control.png")
+                let popOut = SKAction.moveTo(y: -200, duration: 0.5)
+                popOut.timingMode = .easeOut
+                controlPanel.run(popOut)
+                controlPanelActive = false
+            }
+            else {
+                icon.texture = SKTexture(imageNamed: "icons_close.png")
+                let popIn = SKAction.moveTo(y: 0, duration: 0.5)
+                popIn.timingMode = .easeOut
+                controlPanel.run(popIn)
+                controlPanelActive = true
+            }
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
         
-        if tutorialIsActive { tutorialScene.overlayTouched(touch, with: event) }
+        let location = touch.location(in: self)
+        let frontTouchedNode = atPoint(location).name
+        
+        print("\(String(describing: frontTouchedNode))")
+        
+        if frontTouchedNode == "controlPanelIcon" {
+            toggleControlPanel()
+        }
+        
+        if tutorialIsActive {
+            tutorialScene.overlayTouched(touch, with: event)
+            return
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
