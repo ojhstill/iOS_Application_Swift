@@ -176,3 +176,10 @@ AudioKitUI.framework/Modules/AudioKitUI.swiftmodule/x86_64.swiftdoc
 AudioKitUI.framework/Modules/AudioKitUI.swiftmodule/x86_64.swiftmodule
 AudioKitUI.framework/Modules/module.modulemap
 circlesAppIcon.jpg
+Graphics/icons.drawio.xml
+Graphics/icons_blueOrb.png
+Graphics/icons_close.png
+Graphics/icons_control.png
+Graphics/icons_help.png
+Graphics/icons_purpleOrb.png
+Graphics/icons_redOrb.png

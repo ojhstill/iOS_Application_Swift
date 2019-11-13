@@ -21,22 +21,22 @@ class TutorialScene {
     
     private let tutorialText = [0 : "WELCOME TO CIRCLES!  THE INTERACTIVE AUDIO SANDBOX.",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
-                                2 : "IN THE CENTRE IS AN ORB - THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
-                                3 : "ORBS ARE EFFECTED BY GRAVITY - TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
+                                2 : "IN THE CENTRE IS AN ORB. THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
+                                3 : "ORBS ARE EFFECTED BY GRAVITY. TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
                                 5 : "GREAT! NOW LET'S ADD ANOTHER ORB.",
-                                6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB - YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
+                                6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB. YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
                                 8 : "PERFECT! ORBS ALSO HAVE THEIR OWN SOUNDS AND EFFECTS.",
-                                9 : "LET'S TILT THE SCREEN TO MAKE THE ORBS COLLIDE AND LISTEN TO WHAT HAPPENS... ",
+                                9 : "LET'S TILT THE SCREEN TO MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
                                 11: "WOAH! HEAR THAT?",
-                                12: "",
-                                13: "",
-                                14: "",
-                                15: "",
-                                16: "",
-                                17: "",
-                                18: "",
-                                19: "",
-                                20: ""]
+                                12: "THE SIZE OF EACH ORB WILL CHANGE THE OCTAVE RANGE. THE LARGER THE ORB, THE LOWER THE OCTAVE RANGE",
+                                13: "THE IMPACT OF THE COLLISION ALSO EFFECTS THE LOUDNESS OF THE SOUND.",
+                                14: "AT THE BOTTOM OF THE SCREEN IS A SETTINGS ICON.",
+                                15: "YOU CAN CHANGE A VARIETY OF SETTINGS BY TAPPING ON THE ICON TO DISPLAY A CONTROL PANEL.",
+                                16: "LET'S CHANGE THE TYPE OF ORB. THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
+                                17: " ",
+                                18: " ",
+                                19: " ",
+                                20: " "]
     
     init(sandbox: SandboxScene) {
         
