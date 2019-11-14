@@ -16,25 +16,27 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     /* CLASS VARIABLES */
     
     // Define application managers.
-    public var motionManager:               CMMotionManager!
-    public var audioManager:                AudioManager!
+    private var motionManager:              CMMotionManager!                    // Manages CoreMotion library and accelerometer data.
+    private var audioManager:               AudioManager!                       // Manages audio output using AudioKit.
     
     // Define sandbox scene varibles.
-    private var sandboxScene:               SKNode!
-    private var orbSelected:                String!
-    private var orbProperties:              (position: CGPoint, size: CGSize)!
-    private var orbGraphicArray:            [SKSpriteNode]!
-    public  var orbArray:                   [Orb]!
-    public  var hasOrbCollided:             Bool!
+    private var sandboxParentNode:          SKNode!                             // Main parent that holds all nodes associated with the sandbox scene.
+    private var orbSelected:                String!                             // String to hold the currently selected orb type.
+    private var orbProperties:              (pos: CGPoint, size: CGSize)!       // Tuple to store the orb properties before an orb's creation.
+    private var orbGraphicArray:            [SKSpriteNode]!                     // Graphic array use to reset all sprites before an orb's creation.
+    private var orbArray:                   [Orb]!                              // Array to hold all active orbs in the sandbox.
+    private var orbCollision:               Bool!                               // Boolean to trigger momentarily after each orb collision.
     
     // Define control panel varibles.
-    private var controlPanel:               SKNode!
-    public  var controlPanelActive:         Bool!
+    private var panelParentNode:            SKNode!                             // Sub parent that holds all nodes associated with the control panel.
+    private var panelActive:                Bool!                               // Boolean to trigger when the control panel is active.
+    private var panelIcon:                  SKSpriteNode!                       // Control panel sprite node to open the control panel.
+    private var helpIcon:                   SKSpriteNode!                       // Help sprite node to open the help overlay.
     
     // Define tutorial scene varibles.
-    private var tutorialIsActive:           Bool!
     private var tutorialScene:              TutorialScene!
-    
+    private var tutorialIsActive:           Bool!
+
     
     /* INIT() */
     
@@ -43,7 +45,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         // Set the scale mode to scale to fit the SKView.
         self.scaleMode = .resizeFill
         
-        // Setup the physics properties and user interaction.
+        // Setup the physics world properties and user interaction.
         self.physicsWorld.contactDelegate = self
         self.isUserInteractionEnabled = true
         
@@ -60,46 +62,54 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             self.physicsWorld.gravity = CGVector(dx: CGFloat((data?.acceleration.x)!) * 2, dy: CGFloat((data?.acceleration.y)!) * 2)
         }
         
-        // Initalise class varibles.
-        sandboxScene = self.childNode(withName: "sandboxSceneNode")
+        // Setup all scene nodes to accessible class vairbles.
+        sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
+        panelParentNode = sandboxParentNode.childNode(withName: "controlPanelNode")
         
-        orbArray = [Orb]()
-        orbGraphicArray = [SKSpriteNode]()
-        orbProperties = (CGPoint(x: 0.0, y: 0.0), CGSize(width: 0.0, height: 0.0))
+        panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode
+        helpIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode
+        
+        // Initalise the sandbox node's class varibles.
         orbSelected = "blue"
-        hasOrbCollided = false
         
-        // Setup control panel.
-        controlPanel = self.childNode(withName: "controlPanelNode")
-        controlPanelActive = false
+        orbProperties = (CGPoint(x: 0.0, y: 0.0), CGSize(width: 0.0, height: 0.0))
+        orbGraphicArray = [SKSpriteNode]()
+        orbArray = [Orb]()
+        
+        orbCollision = false
+        panelActive = false
         
         // Create BlueOrb in the centre of the scene to transition from MenuScene.
         let startingOrb = BlueOrb(position: CGPoint(x: frame.width / 2, y: 0 - (frame.height / 2)), size: CGSize(width: 300, height: 300))
         
         // Setup starting orb.
         orbArray.append(startingOrb)
-        sandboxScene.addChild(orbArray[orbArray.count - 1])
+        sandboxParentNode.addChild(orbArray[orbArray.count - 1])
         startingOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
         
-        // Add pinch gesture to view to trigger pinchRecognised() function.
+        // Add pinch gesture to view to trigger 'pinchRecognised()' function.
         let pinch = UIPinchGestureRecognizer(target: scene, action: #selector(pinchRecognised(pinch:)))
         view.addGestureRecognizer(pinch)
         
-        // Add double tap gesture.
-        let doubleTap = UITapGestureRecognizer(target: scene, action: #selector(tapRecognised(tap:)))
+        // Add double tap gesture to view to trigger 'doubleTapRecognised()' function.
+        let doubleTap = UITapGestureRecognizer(target: scene, action: #selector(doubleTapRecognised(tap:)))
         view.addGestureRecognizer(doubleTap)
         
         print("[SandboxScene.swift] Sandbox scene active.")
         
         // If the tutorial is set 'true', start the tutorial sequence.
-        if tutorialIsActive { tutorialScene = TutorialScene(sandbox: self) }
+        if tutorialIsActive {
+            helpIcon.alpha = 0.0
+            panelIcon.alpha = 0.0
+            tutorialScene = TutorialScene(target: self)
+        }
     }
     
     @objc func pinchRecognised(pinch: UIPinchGestureRecognizer) {
         guard pinch.view != nil else { return }
         
-        // Reset orb graphic array.
-        sandboxScene.removeChildren(in: orbGraphicArray)
+        // Reset orb graphic array by removing all assosication from scene and array.
+        sandboxParentNode.removeChildren(in: orbGraphicArray)
         orbGraphicArray.removeAll()
         
         // If a pinch gesture is detected or changed...
@@ -108,8 +118,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             // ... and if two touch points are detected...
             if pinch.numberOfTouches == 2 {
                 // ... update the position of the graphic to the middle point between the two touch coordinates.
-                orbProperties.position.x = (pinch.location(ofTouch: 0, in: pinch.view).x + pinch.location(ofTouch: 1, in: pinch.view).x) / 2
-                orbProperties.position.y = 0 - (pinch.location(ofTouch: 0, in: pinch.view).y + pinch.location(ofTouch: 1, in: pinch.view).y) / 2
+                orbProperties.pos.x = (pinch.location(ofTouch: 0, in: pinch.view).x + pinch.location(ofTouch: 1, in: pinch.view).x) / 2
+                orbProperties.pos.y = 0 - (pinch.location(ofTouch: 0, in: pinch.view).y + pinch.location(ofTouch: 1, in: pinch.view).y) / 2
             }
             else {
                 // ... (else cancel the orb).
@@ -128,7 +138,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
                     orbGraphic = SKSpriteNode(imageNamed: "redOrbSprite")
                 default: // Default orb sprite selection catch.
                     print("[SandboxScene.swift] Error: 'orbSelected' variable not recognised.")
-                    break
+                    return
             }
             
             // Scale and normalise the orb graphic size from 80 to 400.
@@ -143,13 +153,13 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             orbProperties.size = CGSize(width: orbSize, height: orbSize)
             
             // Commit the orb graphic properties to the real visable graphic.
-            orbGraphic.position = orbProperties.position
+            orbGraphic.position = orbProperties.pos
             orbGraphic.size = orbProperties.size
             
             // Add the real graphic to the graphic array and the scene.
             // (This will later be removed if the gesture is updated.)
             orbGraphicArray.append(orbGraphic)
-            sandboxScene.addChild(orbGraphicArray[orbGraphicArray.count - 1])
+            sandboxParentNode.addChild(orbGraphicArray[orbGraphicArray.count - 1])
         }
         
         if pinch.state == .ended {
@@ -159,19 +169,19 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             
             switch orbSelected {
             case "blue": // Blue orb sprite selected.
-                newOrb = BlueOrb(position: orbProperties.position, size: orbProperties.size)
+                newOrb = BlueOrb(position: orbProperties.pos, size: orbProperties.size)
             case "purple": // Purple orb sprite selected.
-                newOrb = PurpleOrb(position: orbProperties.position, size: orbProperties.size)
+                newOrb = PurpleOrb(position: orbProperties.pos, size: orbProperties.size)
             case "red": // Red orb sprite selected.
-                newOrb = RedOrb(position: orbProperties.position, size: orbProperties.size)
+                newOrb = RedOrb(position: orbProperties.pos, size: orbProperties.size)
             default: // Default orb initalisation catch.
                 print("[SandboxScene.swift] Error: 'orbSelected' variable not recognised.")
-                break
+                return
             }
             
             // Add new dynamic orb to scene and the orb array.
             orbArray.append(newOrb)
-            sandboxScene.addChild(orbArray[orbArray.count - 1])
+            sandboxParentNode.addChild(orbArray[orbArray.count - 1])
             
             // Add new orb's synth to the audio mixer.
             newOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
@@ -184,7 +194,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
-    @objc func tapRecognised(tap: UITapGestureRecognizer) {
+    @objc func doubleTapRecognised(tap: UITapGestureRecognizer) {
         guard tap.view != nil else { return }
         tap.numberOfTapsRequired = 2
         
@@ -236,7 +246,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             // If a BLUE and BLUE orb collide - SOFT REVERB
             if bodyA.name == "blueOrb" && bodyB.name == "blueOrb" {
                 
-                hasOrbCollided = true
+                orbCollision = true
                 
                 print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
                 
@@ -251,7 +261,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
                 // Else if a RED and BLUE orb collide - SOFT DELAY
             else if (bodyA.name == "redOrb" && bodyB.name == "blueOrb") || (bodyA.name == "blueOrb" && bodyB.name == "redOrb") {
                 
-                hasOrbCollided = true
+                orbCollision = true
                 
                 print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
                 
@@ -277,7 +287,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
                 // Else if a RED and Red collide - HARD DELAY
             else if bodyA.name == "redOrb" && bodyB.name == "redOrb" {
                 
-                hasOrbCollided = true
+                orbCollision = true
                 
                 print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
                 
@@ -291,45 +301,30 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             }
         }
     }
-
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * TUTORIAL FUNCTIONS  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    public func setTutorialActive(_ bool: Bool) {
-        tutorialIsActive = bool
-    }
-    
-    private func toggleControlPanel() {
-        if let icon = sandboxScene.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
-        
-            if controlPanelActive {
-                icon.texture = SKTexture(imageNamed: "icons_control.png")
-                let popOut = SKAction.moveTo(y: -200, duration: 0.5)
-                popOut.timingMode = .easeOut
-                controlPanel.run(popOut)
-                controlPanelActive = false
-            }
-            else {
-                icon.texture = SKTexture(imageNamed: "icons_close.png")
-                let popIn = SKAction.moveTo(y: 0, duration: 0.5)
-                popIn.timingMode = .easeOut
-                controlPanel.run(popIn)
-                controlPanelActive = true
-            }
-        }
-    }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
         
         let location = touch.location(in: self)
+        let touchedNodes = nodes(at: location)
         let frontTouchedNode = atPoint(location).name
         
         print("\(String(describing: frontTouchedNode))")
         
-        if frontTouchedNode == "controlPanelIcon" {
-            toggleControlPanel()
+        for node in touchedNodes {
+            if node.name == "controlPanelIcon" {
+                toggleControlPanel()
+            }
+            else if node.name == "controlPanelBlueOrb" {
+                selectOrb(colour: "blue")
+            }
+            else if node.name == "controlPanelPurpleOrb" {
+                selectOrb(colour: "purple")
+            }
+            else if node.name == "controlPanelRedOrb" {
+                selectOrb(colour: "red")
+            }
         }
         
         if tutorialIsActive {
@@ -338,11 +333,85 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    private func toggleControlPanel() {
+        if let icon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
+            
+            if panelActive {
+                icon.texture = SKTexture(imageNamed: "icons_control.png")
+                let popOut = SKAction.moveTo(y: -712, duration: 0.5)
+                popOut.timingMode = .easeOut
+                panelParentNode.run(popOut)
+                panelActive = false
+            }
+            else {
+                icon.texture = SKTexture(imageNamed: "icons_close.png")
+                let popIn = SKAction.moveTo(y: -512, duration: 0.5)
+                popIn.timingMode = .easeOut
+                panelParentNode.run(popIn)
+                panelActive = true
+            }
+        }
+    }
+    
+    private func selectOrb(colour: String) {
+        let blueOrbButton = panelParentNode.childNode(withName: "controlPanelBlueOrb")
+        let purpleOrbButton = panelParentNode.childNode(withName: "controlPanelPurpleOrb")
+        let redOrbButton = panelParentNode.childNode(withName: "controlPanelRedOrb")
+        
+        switch colour {
+            
+        case "blue":
+            blueOrbButton?.alpha = 1.0
+            purpleOrbButton?.alpha = 0.6
+            redOrbButton?.alpha = 0.6
+        case "purple":
+            blueOrbButton?.alpha = 0.6
+            purpleOrbButton?.alpha = 1.0
+            redOrbButton?.alpha = 0.6
+        case "red":
+            blueOrbButton?.alpha = 0.6
+            purpleOrbButton?.alpha = 0.6
+            redOrbButton?.alpha = 1.0
+        default:
+            print("[SandboxScene.swift] Error: 'orbSelected' variable not recognised.")
+            return
+        }
+        
+        orbSelected = colour
+    }
+    
     override func update(_ currentTime: TimeInterval) {
         if tutorialIsActive {
             tutorialScene.update()
         }
         
-        hasOrbCollided = false
+        orbCollision = false
+    }
+    
+    public func setTutorialActive(_ bool: Bool) {
+        tutorialIsActive = bool
+    }
+    
+    
+    /* CLASS SETTERS / GETTERS */
+    
+    // Returns true when a collision between two orbs is registered.
+    public func hasOrbCollided() -> Bool {
+        return orbCollision
+    }
+    
+    // Returns true when the control panel is active.
+    public func isControlPanelActive() -> Bool {
+        return panelActive
+    }
+    
+    // Returns the number of active orbs on the screen.
+    public func numberOfOrbs() -> Int {
+        return orbArray.count
+    }
+    
+    // Returns the current gravity as a CGVector.
+    public func getGravity() -> CGVector {
+        return self.physicsWorld.gravity
     }
 }
