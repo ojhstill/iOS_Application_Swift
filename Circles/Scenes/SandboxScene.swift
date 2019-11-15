@@ -405,9 +405,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         return panelActive
     }
     
-    // Returns the number of active orbs on the screen.
-    public func numberOfOrbs() -> Int {
-        return orbArray.count
+    // Returns the array containing all active orbs on the screen.
+    public func getOrbArray() -> [Orb] {
+        return orbArray
     }
     
     // Returns the current gravity as a CGVector.

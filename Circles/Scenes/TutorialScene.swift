@@ -16,6 +16,7 @@ class TutorialScene {
     
     private var sandboxScene:       SandboxScene!                   // Target scene for the tutorial to run over.
     
+    private var sandboxParentNode:  SKNode!
     private var tutorialOverlay:    SKNode!                         // Main parent that holds all nodes associated with the sandbox scene.
     private var userGuideLabel:     SKLabelNode!
     private var currentInfoLabel:   SKLabelNode!
@@ -27,24 +28,31 @@ class TutorialScene {
     
     /* CLASS CONSTANTS */
     
-    private let tutorialText = [0 : "WELCOME TO CIRCLES! THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
+    private let tutorialText = [0 : "WELCOME TO CIRCLES!\n THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
-                                2 : "IN THE CENTRE IS AN ORB. THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
-                                3 : "ORBS ARE EFFECTED BY GRAVITY. TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
-                                5 : "GREAT! NOW LET'S ADD ANOTHER ORB.",
-                                6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB. YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
+                                2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
+                                3 : "ORBS ARE EFFECTED BY GRAVITY.\n TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
+                                5 : "GREAT!\n NOW LET'S ADD ANOTHER ORB.",
+                                6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB.\n YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
                                 8 : "PERFECT! ORBS ALSO HAVE THEIR OWN SOUNDS AND EFFECTS.",
                                 9 : "LET'S TILT THE SCREEN TO MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
-                                11: "WOAH! HEAR THAT?",
-                                12: "THE SIZE OF EACH ORB WILL CHANGE THE OCTAVE RANGE. THE LARGER THE ORB, THE LOWER THE OCTAVE RANGE",
+                                11: "WOAH!\n HEAR THAT?",
+                                12: "THE SIZE OF EACH ORB WILL CHANGE THE OCTAVE RANGE.\n THE LARGER THE ORB, THE LOWER THE OCTAVE RANGE",
                                 13: "THE IMPACT OF THE COLLISION ALSO EFFECTS THE LOUDNESS OF THE SOUND.",
                                 14: "AT THE BOTTOM OF THE SCREEN IS A SETTINGS ICON.",
                                 15: "YOU CAN CHANGE A VARIETY OF SETTINGS BY TAPPING ON THE ICON TO DISPLAY A CONTROL PANEL.",
-                                16: "LET'S CHANGE THE TYPE OF ORB. TAP THE ICON IN THE BOTTOM RIGHT HAND CORNER OF THE SCREEN...",
+                                16: "LET'S CHANGE THE TYPE OF ORB.\n TAP THE ICON IN THE BOTTOM RIGHT CORNER OF THE SCREEN...",
                                 18: "THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
-                                19: " ",
-                                20: " ",
-                                21: " "]
+                                19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
+                                21: "AMAZING!\n NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
+                                22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE ORB WILL CHANGE.",
+                                23: "YOU CAN USE THIS TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES.",
+                                24: " ",
+                                25: "",
+                                26: "",
+                                27: "",
+                                28: "",
+                                29: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN."]
     
     
     /* INIT() */
@@ -55,9 +63,10 @@ class TutorialScene {
         sandboxScene = scene as? SandboxScene
         
         // Set class varibles from nodes in sandboxScene.
-        tutorialOverlay = sandboxScene.childNode(withName: "tutorialSceneNode")
-        currentInfoLabel = tutorialOverlay.childNode(withName: "tutorialInfoLabel") as? SKLabelNode
-        userGuideLabel = tutorialOverlay.childNode(withName: "tutorialGuideLabel") as? SKLabelNode
+        sandboxParentNode = sandboxScene.childNode(withName: "sandboxSceneNode")
+        tutorialOverlay   = sandboxScene.childNode(withName: "tutorialSceneNode")
+        currentInfoLabel  = tutorialOverlay.childNode(withName: "tutorialInfoLabel") as? SKLabelNode
+        userGuideLabel    = tutorialOverlay.childNode(withName: "tutorialGuideLabel") as? SKLabelNode
         
         // Fade in and pulse tutorialGuideLabel.
         userGuideLabel.alpha = 0.0
@@ -112,14 +121,19 @@ class TutorialScene {
             readyToAdvance = true
             toggleTutorialOverlay()
             return
-        case 4, 7, 10, 17: // Tutorial user prompts.
+        case 4, 7, 10, 17, 20: // Tutorial user prompts.
             readyToAdvance = false
             toggleTutorialOverlay()
             return
         case 14: // Fade in control panel icon.
-            if let panelIcon = sandboxScene.childNode(withName: "panelIcon") as? SKSpriteNode {
+            if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
+        case 29: // Fade in help icon.
+            if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
+                panelIcon.run(SKAction.fadeIn(withDuration: 1))
+            }
+            
         default:
             // Ignore and continue.
             break
@@ -156,11 +170,11 @@ class TutorialScene {
         switch tutorialState {
         case 4:
             let gravity = sandboxScene.getGravity()
-            if abs(gravity.dx) > 5.0 || abs(gravity.dy) > 5.0 {
+            if abs(gravity.dx) > 5.0 || abs(gravity.dy) > 3.0 {
                 readyToAdvance = true
             }
         case 7:
-            if sandboxScene.numberOfOrbs() > 1 {
+            if sandboxScene.getOrbArray().count > 1 {
                 readyToAdvance = true
             }
         case 10:
@@ -170,6 +184,13 @@ class TutorialScene {
         case 17:
             if sandboxScene.isControlPanelActive() {
                 userGuideLabel.run(SKAction.moveTo(y: 160, duration: 0))
+                readyToAdvance = true
+            }
+        case 20:
+            let orbs = sandboxScene.getOrbArray()
+            let orbName = orbs[orbs.count - 1].name
+            if orbName == "purpleOrb" || orbName == "redOrb"{
+                userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
                 readyToAdvance = true
             }
         default:
