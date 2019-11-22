@@ -18,9 +18,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PFX-zr-c85">
+                            <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PFX-zr-c85">
                                 <rect key="frame" x="146" y="437" width="476" height="150"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <attributedString key="attributedText">
                                     <fragment content="STORYBOARD NOT IN USE">
                                         <attributes>
@@ -34,6 +33,10 @@
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.12549019607843137" green="0.12549019607843137" blue="0.12549019607843137" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="PFX-zr-c85" firstAttribute="centerY" secondItem="o1J-ST-Wua" secondAttribute="centerY" id="Nch-r4-1z6"/>
+                            <constraint firstItem="PFX-zr-c85" firstAttribute="centerX" secondItem="o1J-ST-Wua" secondAttribute="centerX" id="a1q-QR-lFC"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="68R-VD-ByC"/>
                     </view>
                 </viewController>

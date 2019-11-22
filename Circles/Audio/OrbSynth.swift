@@ -11,32 +11,30 @@ import AudioKit
 
 class OrbSynth: AKFMOscillatorBank {
     
+    /* CLASS VARIABLES */
+    
     // Define class variables.
     var MIDINoteArray: [Int]!
+    var octaveRange: Int!
     
     // Define AudioKit effects.
     var reverb:  AKReverb!
     var delay:   AKDelay!
     var tremolo: AKTremolo!
     
-    // Define internal class constants and dictionaries.
-    let freqNoteValues = ["A": 220.00, "A#": 233.08, "Bb": 233.08, "B": 246.94,
-                          "C": 261.63, "C#": 277.18, "Db": 277.18,
-                          "D": 293.66, "D#": 311.13, "Eb": 311.13, "E": 329.63,
-                          "F": 349.23, "F#": 369.99, "Gb": 369.99,
-                          "G": 392.00, "G#": 415.30, "Ab": 415.30]
     
-    let freqOctMultiplier = [0.25, 0.50, 0.00, 2.00]
+    /* CLASS CONSTANTS */
     
-    let MIDINoteValues = ["A": 57, "A#": 58, "Bb": 58, "B": 59,
-                          "C": 60, "C#": 61, "Db": 61,
-                          "D": 62, "D#": 63, "Eb": 63, "E": 64,
-                          "F": 65, "F#": 66, "Gb": 66,
-                          "G": 67, "G#": 68, "Ab": 68]
+    // MIDI note value dictionary from C0 to B0.
+    let MIDINoteValues = ["C": 12, "C#": 13, "Db": 13,
+                          "D": 14, "D#": 15, "Eb": 15, "E": 16,
+                          "F": 17, "F#": 18, "Gb": 18,
+                          "G": 19, "G#": 20, "Ab": 20,
+                          "A": 21, "A#": 22, "Bb": 22, "B": 23]
     
-    let MIDIOctSelect = [-2, -1, 0, 1]
     
-    /* Designated 'init' function. */
+    /* DESIGNATED INIT() FUNCTION. */
+    
     public override init(waveform: AKTable, carrierMultiplier: Double = 1, modulatingMultiplier: Double = 1, modulationIndex: Double = 1, attackDuration: Double = 0.1, decayDuration: Double = 0.1, sustainLevel: Double = 1, releaseDuration: Double = 0.1, pitchBend: Double = 0, vibratoDepth: Double = 0, vibratoRate: Double = 0) {
         super.init(waveform: waveform, carrierMultiplier: carrierMultiplier, modulatingMultiplier: modulatingMultiplier, modulationIndex: modulationIndex, attackDuration: attackDuration, decayDuration: decayDuration, sustainLevel: sustainLevel, releaseDuration: releaseDuration, pitchBend: pitchBend, vibratoDepth: vibratoDepth, vibratoRate: vibratoRate)
         
@@ -90,11 +88,10 @@ class OrbSynth: AKFMOscillatorBank {
         if MIDINoteArray.count != 0 {
             
             // Randomise the note within the specified scale and the octave.
-            let note   = Int.random(in: 0 ..< MIDINoteArray.count)
-            let octave = Int.random(in: 0 ..< MIDIOctSelect.count)
+            let note = Int.random(in: 0 ..< MIDINoteArray.count)
             
             // Combine the note and octave as a MIDI note with type UInt8 for the synth.
-            let MIDINote = MIDINoteNumber(MIDINoteArray[note] + (MIDIOctSelect[octave] * 12))
+            let MIDINote = MIDINoteNumber(MIDINoteArray[note] + (octaveRange * 12))
             
             // If note selection is already playing, stop the synth.
             self.stop(noteNumber: MIDINote)
@@ -113,6 +110,10 @@ class OrbSynth: AKFMOscillatorBank {
     
     public func disconnectOrbSynthOutput() {
         tremolo.disconnectOutput()
+    }
+    
+    public func setOctaveRange(octave: Int) {
+        octaveRange = octave
     }
     
     required public init?(coder aDecoder: NSCoder) {

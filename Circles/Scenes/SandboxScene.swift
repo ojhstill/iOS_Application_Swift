@@ -185,8 +185,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             
             // Add new orb's synth to the audio mixer.
             newOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
-            
-            print("[SandboxScene.swift] Orb spawned at x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y)) of size: \(Int(newOrb.size.width)) and mass: \(Int(newOrb.physicsBody!.mass))")
         }
         
         if pinch.state == .cancelled {

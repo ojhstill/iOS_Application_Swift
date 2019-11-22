@@ -30,12 +30,12 @@ class TutorialScene {
     
     private let tutorialText = [0 : "WELCOME TO CIRCLES!\n THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
-                                2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPE.",
+                                2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPES.",
                                 3 : "ORBS ARE EFFECTED BY GRAVITY.\n TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
                                 5 : "GREAT!\n NOW LET'S ADD ANOTHER ORB.",
                                 6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB.\n YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
                                 8 : "PERFECT! ORBS ALSO HAVE THEIR OWN SOUNDS AND EFFECTS.",
-                                9 : "LET'S TILT THE SCREEN TO MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
+                                9 : "TILT THE SCREEN TO MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
                                 11: "WOAH!\n HEAR THAT?",
                                 12: "THE SIZE OF EACH ORB WILL CHANGE THE OCTAVE RANGE.\n THE LARGER THE ORB, THE LOWER THE OCTAVE RANGE",
                                 13: "THE IMPACT OF THE COLLISION ALSO EFFECTS THE LOUDNESS OF THE SOUND.",
@@ -170,7 +170,7 @@ class TutorialScene {
         switch tutorialState {
         case 4:
             let gravity = sandboxScene.getGravity()
-            if abs(gravity.dx) > 5.0 || abs(gravity.dy) > 3.0 {
+            if abs(gravity.dx) >= 2.0 || abs(gravity.dy) >= 2.0 {
                 readyToAdvance = true
             }
         case 7:

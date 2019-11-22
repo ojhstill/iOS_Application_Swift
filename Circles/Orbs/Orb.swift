@@ -45,6 +45,17 @@ class Orb: SKSpriteNode {
         
         // Create physics body.
         initOrbPhysics()
+        
+        // Set orb octave range based on the size of the orb:
+        // 1) Subtract the orb's size away from the maxium size.
+        // 2) Divide by the size range over the number of octaves.
+        // 3) Round down to the nearest integer.
+        let oct = Int(floor((400 - size.height) / (320 / 6)))
+        
+        // Set the orb's octave range.
+        orbSynth.setOctaveRange(octave: oct)
+        
+        print("[Orb.swift] Orb spawned at x: \(Int(self.position.x)), y: \(Int(self.position.y)) of size: \(Int(self.size.width)) and mass: \(Int(self.physicsBody!.mass)). Octave range: \(oct)")
     }
     
     public func play(velocity: UInt8){

@@ -11,7 +11,12 @@ import AudioKit
 
 open class AudioManager {
     
+    /* CLASS VARIABLES */
+    
     var mixer: AKMixer!
+    
+    
+    /* INIT() */
     
     init() {
         
