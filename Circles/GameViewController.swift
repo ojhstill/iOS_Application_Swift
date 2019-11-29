@@ -9,16 +9,32 @@
 import SpriteKit
 
 class GameViewController: UIViewController {
-        
+    
+    /* CLASS VARIABLES */
+    
+    public var currentScene:   SKScene!
+    weak    var menuScene:      MenuScene!
+    weak    var sandboxScene:   SandboxScene!
+    
+    
+    /* INIT() */
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
                         
             // Load the SKScene from 'GameScene.sks'
-            if let menuScene = SKScene(fileNamed: "MenuScene") {
+            if let scene = SKScene(fileNamed: "MenuScene") {
                 // Present the menuScene.
-                view.presentScene(menuScene)
+                view.presentScene(scene)
+                
+                // Set the current scene to menuScene.
+                currentScene = scene
+                
+                // Assign weak storage of menuScene and viewController.
+                menuScene = scene as? MenuScene
+                menuScene.viewController = self
             }
             
             // DEBUG TOOLS

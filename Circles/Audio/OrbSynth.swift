@@ -14,8 +14,8 @@ class OrbSynth: AKFMOscillatorBank {
     /* CLASS VARIABLES */
     
     // Define class variables.
-    var MIDINoteArray: [Int]!
-    var octaveRange: Int!
+    private var MIDINoteArray: [Int]!
+    private var octaveRange: Int!
     
     // Define AudioKit effects.
     var reverb:  AKReverb!

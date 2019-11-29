@@ -48,10 +48,10 @@ class TutorialScene {
                                 22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE ORB WILL CHANGE.",
                                 23: "YOU CAN USE THIS TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES.",
                                 24: " ",
-                                25: "",
-                                26: "",
-                                27: "",
-                                28: "",
+                                25: " ",
+                                26: " ",
+                                27: " ",
+                                28: " ",
                                 29: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN."]
     
     

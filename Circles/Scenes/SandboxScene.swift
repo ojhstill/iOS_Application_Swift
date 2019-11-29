@@ -7,13 +7,19 @@
 //
 
 import Foundation
-import SpriteKit
-import GameplayKit
 import CoreMotion
+
+import GameplayKit
+import SpriteKit
+import UIKit
+
+
 
 class SandboxScene: SKScene, SKPhysicsContactDelegate {
     
     /* CLASS VARIABLES */
+    
+    weak var viewController: GameViewController!                                // Manages the scene's view and communicates with the UIKit.
     
     // Define application managers.
     private var motionManager:              CMMotionManager!                    // Manages CoreMotion library and accelerometer data.
@@ -34,8 +40,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     private var helpIcon:                   SKSpriteNode!                       // Help sprite node to open the help overlay.
     
     // Define tutorial scene varibles.
-    private var tutorialScene:              TutorialScene!
-    private var tutorialIsActive:           Bool!
+    private var tutorialScene:              TutorialScene!                      // TutorialScene variable to initalise the tutorial if active.
+    private var tutorialIsActive:           Bool!                               // Boolean to trigger the TutorialScene, set from the MenuScene.
 
     
     /* INIT() */
@@ -48,6 +54,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         // Setup the physics world properties and user interaction.
         self.physicsWorld.contactDelegate = self
         self.isUserInteractionEnabled = true
+        
+        // Setup view controller.
+        viewController.currentScene = self
         
         // Setup audio manager (and AudioKit).
         audioManager = AudioManager()
@@ -65,6 +74,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         // Setup all scene nodes to accessible class vairbles.
         sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
         panelParentNode = sandboxParentNode.childNode(withName: "controlPanelNode")
+        
+        //let slider = UISlider(frame: panelParentNode.frame)
         
         panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode
         helpIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode
@@ -327,7 +338,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         
         if tutorialIsActive {
             tutorialScene.overlayTouched(touch, with: event)
-            return
         }
     }
     

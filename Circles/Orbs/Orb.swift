@@ -13,7 +13,7 @@ import AudioKit
 class Orb: SKSpriteNode {
     
     var orbSynth: OrbSynth!
-    var lightNode: SKLightNode!
+    private var lightNode: SKLightNode!
     
     /* Designated 'init' function */
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {

@@ -13,7 +13,8 @@ class MenuScene: SKScene {
     
     /* CLASS VARIABLES */
     
-    private var tutorialActive: Bool!
+    weak var viewController: GameViewController!        // Manages the scene's view and communicates with the UIKit.
+    private var tutorialActive: Bool!                   // Boolean to trigger the tutorial when game starts.
     
     
     /* INIT() */
@@ -78,6 +79,13 @@ class MenuScene: SKScene {
         // Load the SKScene from 'SandboxScene.sks'
         if let scene = SandboxScene(fileNamed: "SandboxScene") {
             
+            // Set the current scene to menuScene.
+            viewController.currentScene = scene
+            
+            // Assign weak storage of sandboxScene inside the viewController.
+            viewController.sandboxScene = scene
+            scene.viewController = self.viewController
+            
             // Get 'menuOrbSprite' SKSpriteNode from menuScene.
             if let sprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
                 // Scale sprite to original size.
@@ -114,26 +122,15 @@ class MenuScene: SKScene {
         
         // Within the touchedNodes array, ...
         for node in touchedNodes {
+            
             //... if 'menuOrbSprite' is touched, present the sandboxScene.
             if node.name == "menuOrbSprite" {
-                
-                /*
-                // Create SKView to overlay tutorial infomation.
-                let overlayView = SKView(frame: self.view!.frame)
-                
-                // Allow transparency and user interaction.
-                overlayView.allowsTransparency = true
-                overlayView.isUserInteractionEnabled = true
-                
-                // Add overlay SKView as a subview to main SKView and bring to front.
-                self.view!.addSubview(overlayView)
-                self.view!.bringSubviewToFront(overlayView)
-                */
                 
                 // Transition to sandbox scene.
                 presentSandboxScene()
                 break
             }
+                
             //... if 'menuTutorialLabel' is touched, toggle the tutorialActive boolean and update label.
             else if node.name == "menuTutorialLabel" {
                 
