@@ -30,7 +30,7 @@ class TutorialScene {
     
     private let tutorialText = [0 : "WELCOME TO CIRCLES!\n THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
-                                2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDSCAPES.",
+                                2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDS.",
                                 3 : "ORBS ARE EFFECTED BY GRAVITY.\n TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
                                 5 : "GREAT!\n NOW LET'S ADD ANOTHER ORB.",
                                 6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB.\n YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
@@ -45,7 +45,7 @@ class TutorialScene {
                                 18: "THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
                                 19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
                                 21: "AMAZING!\n NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
-                                22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE ORB WILL CHANGE.",
+                                22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
                                 23: "YOU CAN USE THIS TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES.",
                                 24: " ",
                                 25: " ",

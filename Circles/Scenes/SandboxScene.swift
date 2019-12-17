@@ -38,6 +38,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     private var panelActive:                Bool!                               // Boolean to trigger when the control panel is active.
     private var panelIcon:                  SKSpriteNode!                       // Control panel sprite node to open the control panel.
     private var helpIcon:                   SKSpriteNode!                       // Help sprite node to open the help overlay.
+    private var volSlider:                  UISlider!                           // UI volume slider to change the master volume within audioManager.
+    private var keyPicker:                  UIPickerView!
     
     // Define tutorial scene varibles.
     private var tutorialScene:              TutorialScene!                      // TutorialScene variable to initalise the tutorial if active.
@@ -75,7 +77,16 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
         panelParentNode = sandboxParentNode.childNode(withName: "controlPanelNode")
         
-        //let slider = UISlider(frame: panelParentNode.frame)
+        volSlider = UISlider(frame: CGRect(x: 30, y: 1040, width: 150, height: 100))
+//        volSlider.translatesAutoresizingMaskIntoConstraints = false
+
+        viewController.view?.addSubview(volSlider)
+        
+        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1100, width: 150, height: 100))
+        keyPicker.delegate = self.viewController
+        keyPicker.dataSource = self.viewController
+        keyPicker.backgroundColor = .clear
+        viewController.view?.addSubview(keyPicker)
         
         panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode
         helpIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode
@@ -346,16 +357,33 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
             
             if panelActive {
                 icon.texture = SKTexture(imageNamed: "icons_control.png")
-                let popOut = SKAction.moveTo(y: -712, duration: 0.5)
+                
+                let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
                 popOut.timingMode = .easeOut
                 panelParentNode.run(popOut)
+                
+                // *******************
+                
+//                let popOutCA = CABasicAnimation(keyPath: "position")
+//                popOutCA.fillMode = .forwards
+//                popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
+//                popOutCA.duration = 0.5
+//                popOutCA.byValue = [0, 200]
+//                volSlider.layer.add(popOutCA, forKey: "position")
+                
+                volSlider.transform.ty += 200
+                keyPicker.transform.ty += 200
                 panelActive = false
             }
             else {
                 icon.texture = SKTexture(imageNamed: "icons_close.png")
-                let popIn = SKAction.moveTo(y: -512, duration: 0.5)
+                
+                let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
                 popIn.timingMode = .easeOut
                 panelParentNode.run(popIn)
+                
+                volSlider.transform.ty -= 200
+                keyPicker.transform.ty -= 200
                 panelActive = true
             }
         }
