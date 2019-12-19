@@ -8,18 +8,17 @@
 
 import SpriteKit
 
-class GameViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
+class GameViewController: UIViewController {
     
     /* CLASS VARIABLES */
     
     public var currentScene:    SKScene!
-    weak   var menuScene:      MenuScene!
-    weak   var sandboxScene:   SandboxScene!
+    weak   var menuScene:       MenuScene!
+    weak   var sandboxScene:    SandboxScene!
+    
     
     /* CLASS CONSTANTS */
     
-    let pickerData = [["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
-                      ["maj", "min"]]
     
     /* INIT() */
     
@@ -62,17 +61,5 @@ class GameViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDa
 
     override var prefersStatusBarHidden: Bool {
         return true
-    }
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return pickerData.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData[component].count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
-        return NSAttributedString(string: pickerData[component][row], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
     }
 }

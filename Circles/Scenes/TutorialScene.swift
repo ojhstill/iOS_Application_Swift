@@ -46,13 +46,10 @@ class TutorialScene {
                                 19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
                                 21: "AMAZING!\n NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
                                 22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
-                                23: "YOU CAN USE THIS TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES.",
-                                24: " ",
-                                25: " ",
-                                26: " ",
-                                27: " ",
-                                28: " ",
-                                29: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN."]
+                                23: "USE THIS FEATURE TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES!",
+                                24: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
+                                25: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
+                                26: "IT'S ALL OVER TO YOU NOW - ENJOY CIRCLES!"]
     
     
     /* INIT() */
@@ -103,7 +100,7 @@ class TutorialScene {
             // ... fade in overlay.
             tutorialOverlay.run(SKAction.fadeIn(withDuration: 1))
         }
-            // Else, if the tutorial overlay is on, ...
+        // Else, if the tutorial overlay is on, ...
         else if tutorialOverlay.alpha == 1 {
             // ... fade out overlay.
             tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
@@ -129,7 +126,7 @@ class TutorialScene {
             if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
-        case 29: // Fade in help icon.
+        case 25: // Fade in help icon.
             if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }

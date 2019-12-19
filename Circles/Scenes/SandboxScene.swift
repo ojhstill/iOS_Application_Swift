@@ -15,7 +15,7 @@ import UIKit
 
 
 
-class SandboxScene: SKScene, SKPhysicsContactDelegate {
+class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
     /* CLASS VARIABLES */
     
@@ -38,13 +38,21 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     private var panelActive:                Bool!                               // Boolean to trigger when the control panel is active.
     private var panelIcon:                  SKSpriteNode!                       // Control panel sprite node to open the control panel.
     private var helpIcon:                   SKSpriteNode!                       // Help sprite node to open the help overlay.
-    private var volSlider:                  UISlider!                           // UI volume slider to change the master volume within audioManager.
-    private var keyPicker:                  UIPickerView!
+    private var volSlider:                  UISlider!                           // UI volume slider to change the master volume within AudioManager.
+    private var keyPicker:                  UIPickerView!                       // UI picker to change the key of the audio soundscape within OrbSynth.
+    private var keyRoot:                    String!                             //
+    private var keyTonality:                String!                             //
     
     // Define tutorial scene varibles.
     private var tutorialScene:              TutorialScene!                      // TutorialScene variable to initalise the tutorial if active.
     private var tutorialIsActive:           Bool!                               // Boolean to trigger the TutorialScene, set from the MenuScene.
+    
 
+    /* CLASS CONSTANTS */
+    
+    let pickerData = [["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
+                      ["maj", "min"]]
+    
     
     /* INIT() */
     
@@ -77,19 +85,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
         panelParentNode = sandboxParentNode.childNode(withName: "controlPanelNode")
         
-        volSlider = UISlider(frame: CGRect(x: 30, y: 1040, width: 150, height: 100))
-//        volSlider.translatesAutoresizingMaskIntoConstraints = false
-
-        viewController.view?.addSubview(volSlider)
-        
-        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1100, width: 150, height: 100))
-        keyPicker.delegate = self.viewController
-        keyPicker.dataSource = self.viewController
-        keyPicker.backgroundColor = .clear
-        viewController.view?.addSubview(keyPicker)
-        
         panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode
-        helpIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode
+        helpIcon  = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode
         
         // Initalise the sandbox node's class varibles.
         orbSelected = "blue"
@@ -108,6 +105,17 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
         orbArray.append(startingOrb)
         sandboxParentNode.addChild(orbArray[orbArray.count - 1])
         startingOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
+        
+        volSlider = UISlider(frame: CGRect(x: 30, y: 1040, width: 150, height: 100))
+        //        volSlider.translatesAutoresizingMaskIntoConstraints = false
+        
+        viewController.view?.addSubview(volSlider)
+        
+        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1100, width: 150, height: 100))
+        keyPicker.delegate = self
+        keyPicker.dataSource = self
+        keyPicker.backgroundColor = .clear
+        viewController.view?.addSubview(keyPicker)
         
         // Add pinch gesture to view to trigger 'pinchRecognised()' function.
         let pinch = UIPinchGestureRecognizer(target: scene, action: #selector(pinchRecognised(pinch:)))
@@ -390,30 +398,37 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     }
     
     private func selectOrb(colour: String) {
-        let blueOrbButton = panelParentNode.childNode(withName: "controlPanelBlueOrb")
+        let blueOrbButton   = panelParentNode.childNode(withName: "controlPanelBlueOrb")
         let purpleOrbButton = panelParentNode.childNode(withName: "controlPanelPurpleOrb")
-        let redOrbButton = panelParentNode.childNode(withName: "controlPanelRedOrb")
+        let redOrbButton    = panelParentNode.childNode(withName: "controlPanelRedOrb")
         
         switch colour {
             
         case "blue":
-            blueOrbButton?.alpha = 1.0
-            purpleOrbButton?.alpha = 0.6
-            redOrbButton?.alpha = 0.6
+            blueOrbButton?.alpha    = 1.0
+            purpleOrbButton?.alpha  = 0.6
+            redOrbButton?.alpha     = 0.6
         case "purple":
-            blueOrbButton?.alpha = 0.6
-            purpleOrbButton?.alpha = 1.0
-            redOrbButton?.alpha = 0.6
+            blueOrbButton?.alpha    = 0.6
+            purpleOrbButton?.alpha  = 1.0
+            redOrbButton?.alpha     = 0.6
         case "red":
-            blueOrbButton?.alpha = 0.6
-            purpleOrbButton?.alpha = 0.6
-            redOrbButton?.alpha = 1.0
+            blueOrbButton?.alpha    = 0.6
+            purpleOrbButton?.alpha  = 0.6
+            redOrbButton?.alpha     = 1.0
         default:
             print("[SandboxScene.swift] Error: 'orbSelected' variable not recognised.")
             return
         }
         
         orbSelected = colour
+    }
+    
+    private func updateKey() {
+        
+        for orb in orbArray {
+            orb.orbSynth.setScale(scale: "\(keyRoot ?? "C")" + "\(keyTonality ?? "maj")")
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -426,6 +441,27 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate {
     
     public func setTutorialActive(_ bool: Bool) {
         tutorialIsActive = bool
+    }
+    
+    
+    /* DATA PICKER PROTOCOLS */
+    
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return pickerData.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return pickerData[component].count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
+        return NSAttributedString(string: pickerData[component][row], attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        keyRoot = pickerData[0][pickerView.selectedRow(inComponent: 0)]
+        keyTonality = pickerData[1][pickerView.selectedRow(inComponent: 1)]
+        updateKey()
     }
     
     
