@@ -13,7 +13,7 @@ import AudioKit
 class Orb: SKSpriteNode {
     
     var orbSynth: OrbSynth!
-    private var lightNode: SKLightNode!
+    public var lightNode: SKLightNode!
     
     /* Designated 'init' function */
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
@@ -28,7 +28,8 @@ class Orb: SKSpriteNode {
         lightNode.position = .zero
         lightNode.categoryBitMask = 1
         lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
-        lightNode.falloff = 11
+        lightNode.ambientColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
+        lightNode.falloff = 12
         lightNode.isEnabled = true
         self.addChild(lightNode)
         
@@ -59,6 +60,7 @@ class Orb: SKSpriteNode {
     }
     
     public func play(velocity: UInt8){
+        lightNode.falloff = 10
         orbSynth.playRandom(MIDIVelocity: velocity)
     }
     
@@ -89,7 +91,7 @@ class Orb: SKSpriteNode {
         
         // Set sprite node's light mask values.
         self.lightingBitMask = 1
-        self.shadowedBitMask = 0
+        self.shadowedBitMask = 1
         self.shadowCastBitMask = 0
     }
     

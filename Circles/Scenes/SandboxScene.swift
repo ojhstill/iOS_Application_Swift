@@ -40,8 +40,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     private var helpIcon:                   SKSpriteNode!                       // Help sprite node to open the help overlay.
     private var volSlider:                  UISlider!                           // UI volume slider to change the master volume within AudioManager.
     private var keyPicker:                  UIPickerView!                       // UI picker to change the key of the audio soundscape within OrbSynth.
-    private var keyRoot:                    String!                             //
-    private var keyTonality:                String!                             //
+    private var keyRoot:                    String!                             // The selected root key from the keyPicker data array.
+    private var keyTonality:                String!                             // The selected major or minor tonality from the keyPicker data array.
     
     // Define tutorial scene varibles.
     private var tutorialScene:              TutorialScene!                      // TutorialScene variable to initalise the tutorial if active.
@@ -50,6 +50,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
 
     /* CLASS CONSTANTS */
     
+    // Define the displayed data array for UIPicker keyPicker.
     let pickerData = [["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
                       ["maj", "min"]]
     
@@ -106,11 +107,15 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         sandboxParentNode.addChild(orbArray[orbArray.count - 1])
         startingOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
         
+        // Create volume slider and add to view controller.
         volSlider = UISlider(frame: CGRect(x: 30, y: 1040, width: 150, height: 100))
-        //        volSlider.translatesAutoresizingMaskIntoConstraints = false
-        
+        volSlider.minimumValue = 0
+        volSlider.maximumValue = 1
+        volSlider.value = 1
+        volSlider.addTarget(self, action: #selector(changeVolume(_:)), for: .valueChanged)
         viewController.view?.addSubview(volSlider)
         
+        // Create key picker and add to view controller.
         keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1100, width: 150, height: 100))
         keyPicker.delegate = self
         keyPicker.dataSource = self
@@ -254,10 +259,12 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     }
     
     func didBegin(_ contact: SKPhysicsContact) {
+        
+        // Setup two variables to store the contacted bodies as SKSpriteNodes.
         let bodyA = contact.bodyA.node! as! SKSpriteNode
         let bodyB = contact.bodyB.node! as! SKSpriteNode
         
-        // Scale impulse of collision to around the velocity range.
+        // Calibrate impulse of collision to around the velocity range.
         var velocity = Int(contact.collisionImpulse / 30000)
         
         // Normalise velocity value for UInt8 MIDI data.
@@ -265,67 +272,47 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             velocity = 127
         }
         
-        // Trigger soundscape if collision inpulse is significant enough.
-        // (Prevents notes playing when contact bodies are rolling.)
-        if velocity >= 10 {
+        // Trigger soundscape if collision is between orbs and if impluse is significant enough.
+        // (Prevents notes playing when contact bodies are rolling over each other.)
+        if (bodyA.name == "blueOrb" || bodyA.name == "purpleOrb" || bodyA.name == "redOrb") &&
+           (bodyB.name == "blueOrb" || bodyB.name == "purpleOrb" || bodyB.name == "redOrb") &&
+           (velocity >= 10) {
             
-            print("Collision between \(bodyA.name!) and \(bodyB.name!)")
+            orbCollision = true
+            print("[SandboxScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
             
-            // If a BLUE and BLUE orb collide - SOFT REVERB
-            if bodyA.name == "blueOrb" && bodyB.name == "blueOrb" {
-                
-                orbCollision = true
-                
-                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
-                
-                if let orb = bodyA as? Orb {
-                    orb.orbSynth.reverb.dryWetMix = 0.9
-                    orb.orbSynth.delay.dryWetMix = 0.0
-                    orb.orbSynth.tremolo.depth = 0.1
-                    orb.orbSynth.tremolo.frequency = 2.0
-                    orb.play(velocity: UInt8(velocity))
-                }
+            // Soundscape trigger for orb A:
+            
+            if let orb = bodyA as? BlueOrb {
+                orb.changeEffects(collisionWith: bodyB.name)
+                orb.play(velocity: UInt8(velocity))
             }
-                // Else if a RED and BLUE orb collide - SOFT DELAY
-            else if (bodyA.name == "redOrb" && bodyB.name == "blueOrb") || (bodyA.name == "blueOrb" && bodyB.name == "redOrb") {
-                
-                orbCollision = true
-                
-                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
-                
-                //if Int.random(in: 0 ... 1) == 0 {
-                if let orb = bodyA as? Orb {
-                    orb.orbSynth.reverb.dryWetMix = 0.5
-                    orb.orbSynth.delay.dryWetMix = 1.0
-                    orb.orbSynth.tremolo.depth = 0.7
-                    orb.orbSynth.tremolo.frequency = 4.0
-                    orb.play(velocity: UInt8(velocity))
-                }
-                //}
-                //else {
-                if let orb = bodyB as? Orb {
-                    orb.orbSynth.reverb.dryWetMix = 0.5
-                    orb.orbSynth.delay.dryWetMix = 1.0
-                    orb.orbSynth.tremolo.depth = 0.7
-                    orb.orbSynth.tremolo.frequency = 4.0
-                    orb.play(velocity: UInt8(velocity))
-                }
-                //}
+            
+            if let orb = bodyA as? PurpleOrb {
+                orb.changeEffects(collisionWith: bodyB.name)
+                orb.play(velocity: UInt8(velocity))
             }
-                // Else if a RED and Red collide - HARD DELAY
-            else if bodyA.name == "redOrb" && bodyB.name == "redOrb" {
-                
-                orbCollision = true
-                
-                print("[GaneScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
-                
-                if let orb = bodyA as? Orb {
-                    orb.orbSynth.reverb.dryWetMix = 0.3
-                    orb.orbSynth.delay.dryWetMix = 0.7
-                    orb.orbSynth.tremolo.depth = 1.0
-                    orb.orbSynth.tremolo.frequency = 8.0
-                    orb.play(velocity: UInt8(velocity))
-                }
+            
+            if let orb = bodyA as? RedOrb {
+                orb.changeEffects(collisionWith: bodyB.name)
+                orb.play(velocity: UInt8(velocity))
+            }
+            
+            // Soundscape trigger for orb B:
+            
+            if let orb = bodyB as? BlueOrb {
+                orb.changeEffects(collisionWith: bodyA.name)
+                orb.play(velocity: UInt8(velocity))
+            }
+            
+            if let orb = bodyB as? PurpleOrb {
+                orb.changeEffects(collisionWith: bodyA.name)
+                orb.play(velocity: UInt8(velocity))
+            }
+            
+            if let orb = bodyB as? RedOrb {
+                orb.changeEffects(collisionWith: bodyA.name)
+                orb.play(velocity: UInt8(velocity))
             }
         }
     }
@@ -424,8 +411,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         orbSelected = colour
     }
     
+    @IBAction private func changeVolume(_ sender: UISlider!) {
+        audioManager.setVolume(to: Double(volSlider!.value))
+    }
+    
     private func updateKey() {
-        
         for orb in orbArray {
             orb.orbSynth.setScale(scale: "\(keyRoot ?? "C")" + "\(keyTonality ?? "maj")")
         }
@@ -437,6 +427,15 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         }
         
         orbCollision = false
+        
+        for orb in orbArray {
+            if orb.lightNode.falloff < 12 {
+                orb.lightNode.falloff += 0.2
+            }
+            else {
+                orb.lightNode.falloff = 12
+            }
+        }
     }
     
     public func setTutorialActive(_ bool: Bool) {

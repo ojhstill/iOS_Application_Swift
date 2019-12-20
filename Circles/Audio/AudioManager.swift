@@ -35,4 +35,8 @@ open class AudioManager {
         mixer.connect(input: input)
     }
     
+    open func setVolume(to volume: Double) {
+        mixer.volume = volume
+    }
+    
 }

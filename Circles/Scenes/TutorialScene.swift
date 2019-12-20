@@ -44,12 +44,13 @@ class TutorialScene {
                                 16: "LET'S CHANGE THE TYPE OF ORB.\n TAP THE ICON IN THE BOTTOM RIGHT CORNER OF THE SCREEN...",
                                 18: "THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
                                 19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
-                                21: "AMAZING!\n NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
-                                22: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
-                                23: "USE THIS FEATURE TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES!",
-                                24: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
-                                25: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
-                                26: "IT'S ALL OVER TO YOU NOW - ENJOY CIRCLES!"]
+                                21: "AMAZING!\n NOW LET'S MAKE THEM COLLIDE...",
+                                23: "NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
+                                24: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
+                                25: "USE THIS FEATURE TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES!",
+                                26: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
+                                27: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
+                                28: "IT'S ALL OVER TO YOU NOW - ENJOY CIRCLES!"]
     
     
     /* INIT() */
@@ -118,7 +119,7 @@ class TutorialScene {
             readyToAdvance = true
             toggleTutorialOverlay()
             return
-        case 4, 7, 10, 17, 20: // Tutorial user prompts.
+        case 4, 7, 10, 17, 20, 22: // Tutorial user prompts.
             readyToAdvance = false
             toggleTutorialOverlay()
             return
@@ -126,11 +127,13 @@ class TutorialScene {
             if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
-        case 25: // Fade in help icon.
+        case 26: // Fade in help icon.
             if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
-            
+        case 28: // End tutorial sequence.
+            toggleTutorialOverlay()
+            sandboxScene.setTutorialActive(false)
         default:
             // Ignore and continue.
             break
@@ -186,8 +189,12 @@ class TutorialScene {
         case 20:
             let orbs = sandboxScene.getOrbArray()
             let orbName = orbs[orbs.count - 1].name
-            if orbName == "purpleOrb" || orbName == "redOrb"{
+            if orbName == "purpleOrb" || orbName == "redOrb" {
                 userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
+                readyToAdvance = true
+            }
+        case 22:
+            if sandboxScene.hasOrbCollided() {
                 readyToAdvance = true
             }
         default:

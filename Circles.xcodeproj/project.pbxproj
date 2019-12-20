@@ -98,8 +98,8 @@
 			isa = PBXGroup;
 			children = (
 				FE178FAE23770FFC00B4E24E /* BlueOrb.swift */,
-				FE178FAF23770FFC00B4E24E /* RedOrb.swift */,
 				FE178FB023770FFC00B4E24E /* PurpleOrb.swift */,
+				FE178FAF23770FFC00B4E24E /* RedOrb.swift */,
 				FE178FB123770FFC00B4E24E /* Orb.swift */,
 			);
 			path = Orbs;
@@ -138,11 +138,11 @@
 				FE3C0A0023746BD600DB8F0D /* AppDelegate.swift */,
 				FE3C0A0823746BD600DB8F0D /* GameViewController.swift */,
 				FE3C0A0423746BD600DB8F0D /* Actions.sks */,
+				FE3C0A0F23746BD700DB8F0D /* LaunchScreen.storyboard */,
+				FE3C0A0A23746BD600DB8F0D /* Main.storyboard */,
 				FE178FA323770CD800B4E24E /* Scenes */,
 				FE178FB62377102100B4E24E /* Audio */,
 				FE178FAD23770FFC00B4E24E /* Orbs */,
-				FE3C0A0F23746BD700DB8F0D /* LaunchScreen.storyboard */,
-				FE3C0A0A23746BD600DB8F0D /* Main.storyboard */,
 				FE3C0A0D23746BD600DB8F0D /* Assets.xcassets */,
 				FE3C0A1223746BD700DB8F0D /* Info.plist */,
 			);
