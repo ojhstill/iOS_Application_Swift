@@ -2,23 +2,25 @@
 //  MenuScene.swift
 //  Circles
 //
-//  Created by Oliver Still on 07/11/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 07/11/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+// Import Core Libraries
 import Foundation
 import SpriteKit
 
 class MenuScene: SKScene {
     
-    /* CLASS VARIABLES */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    weak var viewController: GameViewController!        // Manages the scene's view and communicates with the UIKit.
-    private var tutorialActive: Bool!                   // Boolean to trigger the tutorial when game starts.
-    
-    
-    /* INIT() */
-    
+    // Define menu scene varibles:
+    weak    var viewController:     GameViewController!         // Manages the scene's view and communicates with the UIKit.
+    private var tutorialActive:     Bool!                       // Boolean to trigger the tutorial when game starts.
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     override func didMove(to view: SKView) {
         
         // Set the scale mode to scale to fit the SKView.
@@ -27,91 +29,96 @@ class MenuScene: SKScene {
         // Initialise tutorialActive boolean to false.
         tutorialActive = false
         
-        // Call private function to animate static menuScene.
+        // Call private function to animate MenuScene.
         animateMenuScreen(in: view)
         
         print("[MenuScene.swift] Menu scene active.")
     }
     
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
     private func animateMenuScreen(in view: SKView) {
         
-        // Get 'menuOrbSprite' SKSpriteNode from menuScene.
-        if let sprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
+        // Get 'menuOrbSprite' SKSpriteNode from MenuScene.
+        if let orbSprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
             // Pulse sprite.
-            sprite.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!))
+            orbSprite.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!))
             
-            // Get 'orbLightNode' SKLightNode from menuScene.
-            if let light = sprite.childNode(withName: "orbLightNode") as? SKLightNode {
+            // Get 'orbLightNode' SKLightNode from MenuScene.
+            if let lightNode = orbSprite.childNode(withName: "orbLightNode") as? SKLightNode {
                 // Fade in light.
-                light.falloff = 2.0
-                light.run(SKAction.fadeIn(withDuration: 2))
+                lightNode.falloff = 2.0
+                lightNode.run(SKAction.fadeIn(withDuration: 2))
             }
             
-            // Get 'menuTitleLabel' SKLabelNode from menuScene.
-            if let label = sprite.childNode(withName: "menuTitleLabel") as? SKLabelNode {
+            // Get 'menuTitleLabel' SKLabelNode from MenuScene.
+            if let titleLabel = orbSprite.childNode(withName: "menuTitleLabel") as? SKLabelNode {
                 // Pulse label with 'menuOrbSprite'.
-                label.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),
-                                             SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!)]))
+                titleLabel.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),
+                                                  SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!)]))
             }
         }
         
-        // Get 'menuGuideLabel' SKLabelNode from menuScene.
-        if let label = self.childNode(withName: "menuGuideLabel") as? SKLabelNode {
+        // Get 'menuGuideLabel' SKLabelNode from MenuScene.
+        if let guideLabel = self.childNode(withName: "menuGuideLabel") as? SKLabelNode {
             // Fade in and pulse label.
-            label.alpha = 0.0
-            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale125", duration: 2)!))
-            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                         SKAction.fadeIn(withDuration: 3)]))
+            guideLabel.alpha = 0.0
+            guideLabel.run(SKAction.repeatForever(SKAction.init(named: "PulseScale125", duration: 2)!))
+            guideLabel.run(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                              SKAction.fadeIn(withDuration: 3)]))
         }
         
-        // Get 'menuTutorialLabel' SKLabelNode from menuScene.
-        if let label = self.childNode(withName: "menuTutorialLabel") as? SKLabelNode {
+        // Get 'menuTutorialLabel' SKLabelNode from MenuScene.
+        if let tutorialLabel = self.childNode(withName: "menuTutorialLabel") as? SKLabelNode {
             // Fade in and pulse label.
-            label.alpha = 0.0
-            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
-            label.run(SKAction.sequence([SKAction.wait(forDuration: 2),
-                                         SKAction.fadeIn(withDuration: 3)]))
+            tutorialLabel.alpha = 0.0
+            tutorialLabel.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
+            tutorialLabel.run(SKAction.sequence([SKAction.wait(forDuration: 2),
+                                                 SKAction.fadeIn(withDuration: 3)]))
         }
     }
     
     private func presentSandboxScene() {
             
         // Load the SKScene from 'SandboxScene.sks'
-        if let scene = SandboxScene(fileNamed: "SandboxScene") {
-            
-            // Set the current scene to menuScene.
-            viewController.currentScene = scene
+        if let sandboxScene = SandboxScene(fileNamed: "SandboxScene") {
             
             // Assign weak storage of sandboxScene inside the viewController.
-            viewController.sandboxScene = scene
-            scene.viewController = self.viewController
+            viewController.currentScene = sandboxScene
+            viewController.sandboxScene = sandboxScene
+            sandboxScene.viewController = self.viewController
             
-            // Get 'menuOrbSprite' SKSpriteNode from menuScene.
-            if let sprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
-                // Scale sprite to original size.
-                sprite.removeAllActions()
-                sprite.run(SKAction.scale(to: 1, duration: 1))
+            // Get 'menuOrbSprite' SKSpriteNode from MenuScene.
+            if let orbSprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
+                // Scale orb sprite to original size.
+                orbSprite.removeAllActions()
+                orbSprite.run(SKAction.scale(to: 1, duration: 1))
                 
-                // Get 'menuTitleLabel' SKLabelNode from menuScene.
-                if let label = sprite.childNode(withName: "menuTitleLabel") as? SKLabelNode {
-                    // Fade out label with 'menuOrbSprite'.
-                    label.removeAllActions()
-                    label.run(SKAction.fadeOut(withDuration: 1))
+                // Get 'menuTitleLabel' SKLabelNode from MenuScene.
+                if let titleLabel = orbSprite.childNode(withName: "menuTitleLabel") as? SKLabelNode {
+                    // Fade out title label with 'menuOrbSprite'.
+                    titleLabel.removeAllActions()
+                    titleLabel.run(SKAction.fadeOut(withDuration: 1))
                 }
             }
             
-            // If the tutorial is toggled 'ON', present the tutorial overlay.
-            scene.setTutorialActive(tutorialActive)
+            // If the tutorial is toggled 'true', set the tutorial active within the sandbox to present the tutorial.
+            sandboxScene.setTutorialActive(tutorialActive)
             
             // Create SKTransition to crossfade between scenes.
             let transition = SKTransition.crossFade(withDuration: 3)
             transition.pausesOutgoingScene = false
             
             // Present scene to the SKView.
-            self.view!.presentScene(scene, transition: transition)
+            self.view!.presentScene(sandboxScene, transition: transition)
         }
     }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * MENUSCENE PROTOCOLS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Function triggered when a touch from a user is detected on the scene:
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
@@ -123,30 +130,31 @@ class MenuScene: SKScene {
         // Within the touchedNodes array, ...
         for node in touchedNodes {
             
-            //... if 'menuOrbSprite' is touched, present the sandboxScene.
+            //... if 'menuOrbSprite' is touched, present the SandboxScene.
             if node.name == "menuOrbSprite" {
-                
                 // Transition to sandbox scene.
                 presentSandboxScene()
-                break
+                return
             }
                 
-            //... if 'menuTutorialLabel' is touched, toggle the tutorialActive boolean and update label.
+            //... if 'menuTutorialLabel' is touched, toggle the tutorialActive boolean and update the tutorial label.
             else if node.name == "menuTutorialLabel" {
                 
-                if let label = self.childNode(withName: "menuTutorialLabel") as? SKLabelNode {
+                // Get 'menuTutorialLabel' SKLabelNode from MenuScene.
+                if let tutorialLabel = self.childNode(withName: "menuTutorialLabel") as? SKLabelNode {
+                    
                     if tutorialActive {
-                        label.text = "TUTORIAL OFF"
+                        tutorialLabel.text = "TUTORIAL OFF"
                         tutorialActive = false
                         print("[MenuScene.swift] Tutorial set off.")
                     }
                     else {
-                        label.text = "TUTORIAL ON"
+                        tutorialLabel.text = "TUTORIAL ON"
                         tutorialActive = true
                         print("[MenuScene.swift] Tutorial set on.")
                     }
                 }
-                break
+                return
             }
         }
     }

@@ -2,31 +2,32 @@
 //  TutorialScene.swift
 //  Circles
 //
-//  Created by Oliver Still on 09/11/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 09/11/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+// Import Core Libraries
 import Foundation
 import SpriteKit
 import CoreMotion
 
 class TutorialScene {
     
-    /* CLASS VARIABLES */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Define tutorial scene varibles:
     private var sandboxScene:       SandboxScene!                   // Target scene for the tutorial to run over.
+    private var sequenceState:      Int!                            // Integer to keep track of the current location of the tutorial sequence.
+    private var readyToAdvance:     Bool!                           // Boolean to represent that a tutorial task has been completed.
     
-    private var sandboxParentNode:  SKNode!
-    private var tutorialOverlay:    SKNode!                         // Main parent that holds all nodes associated with the sandbox scene.
-    private var userGuideLabel:     SKLabelNode!
-    private var currentInfoLabel:   SKLabelNode!
-    private var nextInfoLabel:      NSMutableAttributedString!
+    // Define tutorial scene nodes:
+    private var sandboxParentNode:  SKNode!                         // Main parent that holds all nodes associated with the sandbox scene.
+    private var tutorialOverlay:    SKNode!                         // Main parent that holds all nodes associated with the tutorial.
+    private var userGuideLabel:     SKLabelNode!                    // Label to guide the user through the tutorial sequence.
+    private var currentInfoLabel:   SKLabelNode!                    // Current tutorial text displayed from the tutorialText dictionary.
+
     
-    private var sequenceState:      Int!
-    private var readyToAdvance:     Bool!
-    
-    
-    /* CLASS CONSTANTS */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     private let tutorialText = [0 : "WELCOME TO CIRCLES!\n THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
@@ -44,17 +45,19 @@ class TutorialScene {
                                 16: "LET'S CHANGE THE TYPE OF ORB.\n TAP THE ICON IN THE BOTTOM RIGHT CORNER OF THE SCREEN...",
                                 18: "THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
                                 19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
-                                21: "AMAZING!\n NOW LET'S MAKE THEM COLLIDE...",
+                                21: "AMAZING!\n NOW LET'S MAKE THEM COLLIDE AGAIN...",
                                 23: "NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
                                 24: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
-                                25: "USE THIS FEATURE TO CREATE DYNAMIC AND EVOLVING SOUNDSCPAES!",
-                                26: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
-                                27: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
-                                28: "IT'S ALL OVER TO YOU NOW - ENJOY CIRCLES!"]
-    
-    
-    /* INIT() */
-    
+                                25: "USE THIS FEATURE TO CREATE UNIQUE AND EVOLVING SOUNDSCPAES!",
+                                26: "TO REMOVE AN ORB, DOUBLE TAP ON THE ORB YOU WANT TO REMOVE. TRY REMOVING SOME OF THE ORBS ON THE SCREEN...",
+                                28: "YOU'RE GREAT AT THIS!",
+                                29: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
+                                30: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
+                                31: "IT'S ALL OVER TO YOU NOW - ENJOY CIRCLES!"]
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     init(target scene: SKScene) {
         
         // Set sandboxScene as the taget scene class varible.
@@ -73,17 +76,13 @@ class TutorialScene {
         
         // Get 'menuTutorialLabel' SKLabelNode from tutorialSceneNode.
         // (Properties of this varible can remain the same, therefore doesn't need to be a class varible.)
-        if let label = tutorialOverlay.childNode(withName: "tutorialSkipLabel") as? SKLabelNode {
+        if let skipLabel = tutorialOverlay.childNode(withName: "tutorialSkipLabel") as? SKLabelNode {
             // Fade in and pulse label forever.
-            label.alpha = 0.0
-            label.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
-            label.run(SKAction.sequence([SKAction.wait(forDuration: 1),
-                                         SKAction.fadeIn(withDuration: 3)]))
+            skipLabel.alpha = 0.0
+            skipLabel.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 3)!))
+            skipLabel.run(SKAction.sequence([SKAction.wait(forDuration: 1),
+                                             SKAction.fadeIn(withDuration: 3)]))
         }
-        
-        // Create a mutable attributed string using the text and attributes of the existant tutorialInfoLabel.
-        // (This allows the editing of attributed text without changing the look that can then be assigned to an SKLabelNode.)
-        nextInfoLabel = NSMutableAttributedString(string: currentInfoLabel.attributedText!.string, attributes: currentInfoLabel.attributedText!.attributes(at: 0, effectiveRange: nil))
         
         // Prcautionary alpha set to allow the tutorialOverlayToggle() function to work correctly.
         tutorialOverlay.alpha = 0.0
@@ -93,20 +92,17 @@ class TutorialScene {
         readyToAdvance = false
         tutorialSequence()
     }
+
     
-    private func toggleTutorialOverlay() {
-        
-        // If the tutorial overlay is off, ...
-        if tutorialOverlay.alpha == 0 {
-            // ... fade in overlay.
-            tutorialOverlay.run(SKAction.fadeIn(withDuration: 1))
-        }
-        // Else, if the tutorial overlay is on, ...
-        else if tutorialOverlay.alpha == 1 {
-            // ... fade out overlay.
-            tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
-        }
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    // Called after each frame update within the SandboxScene update() protocol.
+    public func update() {
+        waitForUser(at: sequenceState)
     }
+    
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     private func tutorialSequence() {
         
@@ -119,7 +115,7 @@ class TutorialScene {
             readyToAdvance = true
             toggleTutorialOverlay()
             return
-        case 4, 7, 10, 17, 20, 22: // Tutorial user prompts.
+        case 4, 7, 10, 17, 20, 22, 27: // Tutorial user prompts.
             readyToAdvance = false
             toggleTutorialOverlay()
             return
@@ -127,74 +123,63 @@ class TutorialScene {
             if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
-        case 26: // Fade in help icon.
+        case 30: // Fade in help icon.
             if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
                 panelIcon.run(SKAction.fadeIn(withDuration: 1))
             }
-        case 28: // End tutorial sequence.
+        case 32: // End tutorial sequence.
             toggleTutorialOverlay()
             sandboxScene.setTutorialActive(false)
+            return
         default:
             // Ignore and continue.
             break
         }
         
-        // If sequence state case hasnt been called, advance info text.
+        // Create a mutable attributed string using the text and attributes of the existant currentInfoLabel.
+        // (This allows the editing of attributed text without changing the look and style of the SKLabelNode.)
+        let nextInfoLabel = NSMutableAttributedString(string: currentInfoLabel.attributedText!.string,
+                                                  attributes: currentInfoLabel.attributedText!.attributes(at: 0, effectiveRange: nil))
+        
+        // If sequence state tast hasnt been set, advance info text.
         nextInfoLabel.mutableString.setString(tutorialText[sequenceState]!)
         currentInfoLabel.attributedText = nextInfoLabel
-    }
-    
-    public func overlayTouched(_ touch: UITouch, with event: UIEvent?) {
-        
-        // Find the location and nodes of the first touch.
-        let location = touch.location(in: tutorialOverlay)
-        let touchedNodes = sandboxScene.nodes(at: location)
-                
-        for node in touchedNodes {
-            if node.name == "tutorialSkipLabel" {
-                // ... reset tutorial sequence and fade out tutorial overlay.
-                sequenceState = 0
-                tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
-                return
-            }
-        }
-        
-        if readyToAdvance && tutorialOverlay.alpha == 1.0 {
-            sequenceState += 1
-            tutorialSequence()
-        }
     }
     
     private func waitForUser(at tutorialState: Int) {
         
         switch tutorialState {
-        case 4:
+        case 4: // Wait for user to tilt the screen.
             let gravity = sandboxScene.getGravity()
             if abs(gravity.dx) >= 2.0 || abs(gravity.dy) >= 2.0 {
                 readyToAdvance = true
             }
-        case 7:
+        case 7: // Wait for user to add another orb to the sandbox.
             if sandboxScene.getOrbArray().count > 1 {
                 readyToAdvance = true
             }
-        case 10:
+        case 10: // Wait for user to make the orbs collide.
             if sandboxScene.hasOrbCollided() {
                 readyToAdvance = true
             }
-        case 17:
+        case 17: // Wait for user to activate the control panel.
             if sandboxScene.isControlPanelActive() {
                 userGuideLabel.run(SKAction.moveTo(y: 160, duration: 0))
                 readyToAdvance = true
             }
-        case 20:
+        case 20: // Wait for user to add a different orb to the screen.
             let orbs = sandboxScene.getOrbArray()
             let orbName = orbs[orbs.count - 1].name
             if orbName == "purpleOrb" || orbName == "redOrb" {
                 userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
                 readyToAdvance = true
             }
-        case 22:
+        case 22: // Wait for user to make the orbs collide.
             if sandboxScene.hasOrbCollided() {
+                readyToAdvance = true
+            }
+        case 27: // Wait for user to remove orbs down to 2.
+            if sandboxScene.getOrbArray().count < 3 {
                 readyToAdvance = true
             }
         default:
@@ -202,6 +187,7 @@ class TutorialScene {
             return
         }
         
+        // If user has completed the tutorial task and the overlay is off, increase the sequence to the next state.
         if readyToAdvance && tutorialOverlay.alpha == 0.0 {
             toggleTutorialOverlay()
             sequenceState += 1
@@ -209,7 +195,59 @@ class TutorialScene {
         }
     }
     
-    public func update() {
-        waitForUser(at: sequenceState)
+    private func toggleTutorialOverlay() {
+        
+        // If the tutorial overlay is off, ...
+        if tutorialOverlay.alpha == 0 {
+            // ... fade in overlay.
+            tutorialOverlay.run(SKAction.fadeIn(withDuration: 1))
+        }
+            // Else, if the tutorial overlay is on, ...
+        else if tutorialOverlay.alpha == 1 {
+            // ... fade out overlay.
+            tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
+        }
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * TUTORIALSCENE PROTOCOLS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    // Function triggered when a touch from a user is detected on the scene:
+    public func overlayTouched(_ touch: UITouch, with event: UIEvent?) {
+        
+        // Find the location and nodes of the first touch.
+        let location = touch.location(in: tutorialOverlay)
+        let touchedNodes = sandboxScene.nodes(at: location)
+                
+        for node in touchedNodes {
+            // If user touches 'Skip Tutorial' label,...
+            if node.name == "tutorialSkipLabel" {
+                
+                // ... fade out tutorial overlay.
+                
+                tutorialOverlay.run(SKAction.fadeOut(withDuration: 1))
+                
+                // Fade in the control panel icon.
+                if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
+                    panelIcon.run(SKAction.fadeIn(withDuration: 1))
+                }
+                // Fade in the help icon.
+                if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
+                    panelIcon.run(SKAction.fadeIn(withDuration: 1))
+                }
+                
+                // End tutorial.
+                sequenceState = 32
+                sandboxScene.setTutorialActive(false)
+                
+                return
+            }
+        }
+        
+        // If the overlay is on and a task has not been set, increase the sequence to the next state.
+        if readyToAdvance && tutorialOverlay.alpha == 1.0 {
+            sequenceState += 1
+            tutorialSequence()
+        }
     }
 }

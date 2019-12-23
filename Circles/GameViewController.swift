@@ -2,37 +2,36 @@
 //  GameViewController.swift
 //  Circles
 //
-//  Created by Oliver Still on 07/11/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 07/11/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+// Import Core Libraries
 import SpriteKit
 
 class GameViewController: UIViewController {
     
-    /* CLASS VARIABLES */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    public var currentScene:    SKScene!
-    weak   var menuScene:       MenuScene!
-    weak   var sandboxScene:    SandboxScene!
-    
-    
-    /* CLASS CONSTANTS */
-    
-    
-    /* INIT() */
-    
+    public var currentScene:    SKScene!                    //
+    weak   var menuScene:       MenuScene!                  //
+    weak   var sandboxScene:    SandboxScene!               //
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if let view = self.view as! SKView? {
                         
-            // Load the SKScene from 'GameScene.sks'
+            // Load the SKScene from 'MenuScene.sks'
             if let scene = SKScene(fileNamed: "MenuScene") {
-                // Present the menuScene.
+                
+                // Present the application main menu.
                 view.presentScene(scene)
                 
-                // Set the current scene to menuScene.
+                // Store the currently presented scene.
                 currentScene = scene
                 
                 // Assign weak storage of menuScene and viewController.
@@ -40,20 +39,23 @@ class GameViewController: UIViewController {
                 menuScene.viewController = self
             }
             
-            // DEBUG TOOLS
+            // DEBUG TOOLS:
             view.ignoresSiblingOrder = true
             view.showsFPS = false
             view.showsNodeCount = false
         }
     }
     
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * GAMEVIEWCONTROLLER PROTOCOLS * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
     override var shouldAutorotate: Bool {
-        return true
+        return false
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .pad {
-            return .allButUpsideDown
+            return .portrait
         } else {
             return .all
         }

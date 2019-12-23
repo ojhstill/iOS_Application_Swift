@@ -2,28 +2,29 @@
 //  OrbSynth.swift
 //  Circles
 //
-//  Created by Oliver Still on 23/10/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 23/10/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+// Import Core Libraries
 import Foundation
 import AudioKit
 
 class OrbSynth: AKFMOscillatorBank {
     
-    /* CLASS VARIABLES */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define class variables.
-    private var MIDINoteArray: [Int]!
-    private var octaveRange: Int!
+    private var MIDINoteArray:  [Int]!                  //
+    private var octaveRange:    Int!                    //
     
     // Define AudioKit effects.
-    var reverb:  AKReverb!
-    var delay:   AKDelay!
-    var tremolo: AKTremolo!
+    var reverb:                 AKReverb!               //
+    var delay:                  AKDelay!                //
+    var tremolo:                AKTremolo!              //
     
     
-    /* CLASS CONSTANTS */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // MIDI note value dictionary from C0 to B0.
     let MIDINoteValues = ["C": 12, "Db": 13, "D": 14, "Eb": 15, "E": 16, "F": 17, "Gb": 18, "G": 19, "Ab": 20, "A": 21, "Bb": 22, "B": 23]
@@ -40,9 +41,11 @@ class OrbSynth: AKFMOscillatorBank {
                   "Amaj":  ["Gb", "A",  "B",  "Db", "E" ], "Gbmin": ["Gb", "A",  "B",  "Db", "E" ],
                   "Bbmaj": ["G",  "Bb", "C",  "D",  "F" ], "Gmin":  ["G",  "Bb", "C",  "D",  "F" ],
                   "Bmaj":  ["Ab", "B",  "Db", "Eb", "Gb"], "Abmin": ["Ab", "B",  "Db", "Eb", "Gb"]]
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    /* DESIGNATED INIT() FUNCTION. */
-    
+    // Designated init() function:
     public override init(waveform: AKTable, carrierMultiplier: Double = 1, modulatingMultiplier: Double = 1, modulationIndex: Double = 1, attackDuration: Double = 0.1, decayDuration: Double = 0.1, sustainLevel: Double = 1, releaseDuration: Double = 0.1, pitchBend: Double = 0, vibratoDepth: Double = 0, vibratoRate: Double = 0) {
         super.init(waveform: waveform, carrierMultiplier: carrierMultiplier, modulatingMultiplier: modulatingMultiplier, modulationIndex: modulationIndex, attackDuration: attackDuration, decayDuration: decayDuration, sustainLevel: sustainLevel, releaseDuration: releaseDuration, pitchBend: pitchBend, vibratoDepth: vibratoDepth, vibratoRate: vibratoRate)
         
@@ -70,6 +73,28 @@ class OrbSynth: AKFMOscillatorBank {
         delay.setOutput(to: reverb)
         reverb.setOutput(to: tremolo)
     }
+    
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func connectOrbSynthOutput(to node: AKInput) {
+        tremolo.setOutput(to: node)
+    }
+    
+    public func disconnectOrbSynthOutput() {
+        tremolo.disconnectOutput()
+    }
+    
+    public func setOctaveRange(octave: Int) {
+        octaveRange = octave
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * INTERNAL CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     func setScale(scale: String) {
         
@@ -114,21 +139,5 @@ class OrbSynth: AKFMOscillatorBank {
             // Print note data to console.
             print("[OrbSynth.swift] Playing note: \(MIDINote) of velocity \(MIDIVelocity)")
         }
-    }
-    
-    public func connectOrbSynthOutput(to node: AKInput) {
-        tremolo.setOutput(to: node)
-    }
-    
-    public func disconnectOrbSynthOutput() {
-        tremolo.disconnectOutput()
-    }
-    
-    public func setOctaveRange(octave: Int) {
-        octaveRange = octave
-    }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

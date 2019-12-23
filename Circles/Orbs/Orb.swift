@@ -2,20 +2,27 @@
 //  Orb.swift
 //  Circles
 //
-//  Created by Oliver Still on 10/10/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 10/10/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+
+// Import Core Libraries
 import Foundation
 import SpriteKit
 import AudioKit
 
 class Orb: SKSpriteNode {
-    
-    var orbSynth: OrbSynth!
-    public var lightNode: SKLightNode!
-    
-    /* Designated 'init' function */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    public var orbSynth:    OrbSynth!                   //
+    public var lightNode:   SKLightNode!                //
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    // Designated init() function:
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
         
@@ -37,7 +44,7 @@ class Orb: SKSpriteNode {
         orbSynth = OrbSynth()
     }
     
-    /* Convenience 'init' function */
+    // Convenience init() function:
     public convenience init(position: CGPoint, size: CGSize) {
         
         self.init()
@@ -59,11 +66,21 @@ class Orb: SKSpriteNode {
         print("[Orb.swift] Orb spawned at x: \(Int(self.position.x)), y: \(Int(self.position.y)) of size: \(Int(self.size.width)) and mass: \(Int(self.physicsBody!.mass)). Octave range: \(oct)")
     }
     
+    required public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
     public func play(velocity: UInt8){
         lightNode.falloff = 10
         orbSynth.playRandom(MIDIVelocity: velocity)
     }
     
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     private func initOrbPhysics() {
 
         // Set sprite node's physics body and gravity properties.
@@ -94,9 +111,4 @@ class Orb: SKSpriteNode {
         self.shadowedBitMask = 1
         self.shadowCastBitMask = 0
     }
-    
-    required public init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
 }

@@ -2,8 +2,8 @@
 //  AppDelegate.swift
 //  Circles
 //
-//  Created by Oliver Still on 07/11/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 07/11/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
 import UIKit
@@ -42,4 +42,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
 }
-

@@ -2,38 +2,36 @@
 //  SandboxScene.swift
 //  Circles
 //
-//  Created by Oliver Still on 07/11/2019.
-//  Copyright © 2019 Oliver Still. All rights reserved.
+//  Created by Y3857872 on 07/11/2019.
+//  Copyright © 2019 Y3857872. All rights reserved.
 //
 
+// Import Core Libraries
 import Foundation
 import CoreMotion
-
 import GameplayKit
 import SpriteKit
 import UIKit
 
-
-
 class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
     
-    /* CLASS VARIABLES */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    weak var viewController: GameViewController!                                // Manages the scene's view and communicates with the UIKit.
-    
-    // Define application managers.
+    // Define application managers:
+    weak    var viewController:             GameViewController!                 // Manages the scene's view and communicates with the UIKit.
     private var motionManager:              CMMotionManager!                    // Manages CoreMotion library and accelerometer data.
     private var audioManager:               AudioManager!                       // Manages audio output using AudioKit.
     
-    // Define sandbox scene varibles.
+    // Define sandbox scene varibles:
     private var sandboxParentNode:          SKNode!                             // Main parent that holds all nodes associated with the sandbox scene.
     private var orbSelected:                String!                             // String to hold the currently selected orb type.
     private var orbProperties:              (pos: CGPoint, size: CGSize)!       // Tuple to store the orb properties before an orb's creation.
     private var orbGraphicArray:            [SKSpriteNode]!                     // Graphic array use to reset all sprites before an orb's creation.
     private var orbArray:                   [Orb]!                              // Array to hold all active orbs in the sandbox.
     private var orbCollision:               Bool!                               // Boolean to trigger momentarily after each orb collision.
+    private var helpOverlay:                SKSpriteNode!                       // Node to display the help overlay triggered by the help icon.
     
-    // Define control panel varibles.
+    // Define control panel varibles:
     private var panelParentNode:            SKNode!                             // Sub parent that holds all nodes associated with the control panel.
     private var panelActive:                Bool!                               // Boolean to trigger when the control panel is active.
     private var panelIcon:                  SKSpriteNode!                       // Control panel sprite node to open the control panel.
@@ -43,20 +41,19 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     private var keyRoot:                    String!                             // The selected root key from the keyPicker data array.
     private var keyTonality:                String!                             // The selected major or minor tonality from the keyPicker data array.
     
-    // Define tutorial scene varibles.
+    // Define tutorial scene varibles:
     private var tutorialScene:              TutorialScene!                      // TutorialScene variable to initalise the tutorial if active.
     private var tutorialIsActive:           Bool!                               // Boolean to trigger the TutorialScene, set from the MenuScene.
-    
 
-    /* CLASS CONSTANTS */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    // Define the displayed data array for UIPicker keyPicker.
-    let pickerData = [["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
-                      ["maj", "min"]]
-    
-    
-    /* INIT() */
-    
+    // Define the displayed data array for the UIPicker keyPicker.
+    let pickerData = [["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"], ["maj", "min"]]
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
     override func didMove(to view: SKView) {
         
         // Set the scale mode to scale to fit the SKView.
@@ -65,6 +62,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         // Setup the physics world properties and user interaction.
         self.physicsWorld.contactDelegate = self
         self.isUserInteractionEnabled = true
+        
+        // Set the physics body to the edge of the screen.
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
         
         // Setup view controller.
         viewController.currentScene = self
@@ -116,7 +116,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         viewController.view?.addSubview(volSlider)
         
         // Create key picker and add to view controller.
-        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1100, width: 150, height: 100))
+        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1115, width: 150, height: 100))
         keyPicker.delegate = self
         keyPicker.dataSource = self
         keyPicker.backgroundColor = .clear
@@ -139,6 +139,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             tutorialScene = TutorialScene(target: self)
         }
     }
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * USER GESTURE ACTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     @objc func pinchRecognised(pinch: UIPinchGestureRecognizer) {
         guard pinch.view != nil else { return }
@@ -258,11 +260,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         }
     }
     
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SANDBOXSCENE PROTOCOLS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    // Function triggered when contact or collision is detected between two SKPhysics bodies:
     func didBegin(_ contact: SKPhysicsContact) {
-        
-        // Setup two variables to store the contacted bodies as SKSpriteNodes.
-        let bodyA = contact.bodyA.node! as! SKSpriteNode
-        let bodyB = contact.bodyB.node! as! SKSpriteNode
         
         // Calibrate impulse of collision to around the velocity range.
         var velocity = Int(contact.collisionImpulse / 30000)
@@ -272,13 +274,18 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             velocity = 127
         }
         
-        // Trigger soundscape if collision is between orbs and if impluse is significant enough.
-        // (Prevents notes playing when contact bodies are rolling over each other.)
+        // Setup two variables to store the contacted bodies.
+        let bodyA = contact.bodyA.node!
+        let bodyB = contact.bodyB.node!
+        
+        // Trigger soundscape if collision is between two orbs and if impluse is significant enough.
+        // (Prevents notes playing when contact bodies are rolling over each other / velocities of 10 or less.)
         if (bodyA.name == "blueOrb" || bodyA.name == "purpleOrb" || bodyA.name == "redOrb") &&
            (bodyB.name == "blueOrb" || bodyB.name == "purpleOrb" || bodyB.name == "redOrb") &&
            (velocity >= 10) {
             
             orbCollision = true
+            
             print("[SandboxScene.swift] Collision of impulse: \(Int(contact.collisionImpulse))")
             
             // Soundscape trigger for orb A:
@@ -317,6 +324,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         }
     }
     
+    // Function triggered when a touch from a user is detected on the scene:
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         // Guard to ignore all other touches if multiple touches are registered.
         guard let touch = touches.first else { return }
@@ -340,6 +348,23 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             else if node.name == "controlPanelRedOrb" {
                 selectOrb(colour: "red")
             }
+            else if node.name == "helpIcon" {
+
+                // Get the 'helpOverlay' node from SandboxScene.
+                if let helpOverlay = self.childNode(withName: "helpOverlayNode") {
+                    
+                    // If overlay is off, fade in.
+                    if helpOverlay.alpha == 0 {
+                        helpIcon.texture = SKTexture(imageNamed: "icons_close.png")
+                        helpOverlay.run(SKAction.fadeIn(withDuration: 1))
+                    }
+                    // Else if the overlay is on, fade out.
+                    else if helpOverlay.alpha == 1 {
+                        helpIcon.texture = SKTexture(imageNamed: "icons_help.png")
+                        helpOverlay.run(SKAction.fadeOut(withDuration: 1))
+                    }
+                }
+            }
         }
         
         if tutorialIsActive {
@@ -347,40 +372,73 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         }
     }
     
-    private func toggleControlPanel() {
-        if let icon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
-            
-            if panelActive {
-                icon.texture = SKTexture(imageNamed: "icons_control.png")
-                
-                let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
-                popOut.timingMode = .easeOut
-                panelParentNode.run(popOut)
-                
-                // *******************
-                
-//                let popOutCA = CABasicAnimation(keyPath: "position")
-//                popOutCA.fillMode = .forwards
-//                popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
-//                popOutCA.duration = 0.5
-//                popOutCA.byValue = [0, 200]
-//                volSlider.layer.add(popOutCA, forKey: "position")
-                
-                volSlider.transform.ty += 200
-                keyPicker.transform.ty += 200
-                panelActive = false
+    // Function is called after each frame update:
+    override func update(_ currentTime: TimeInterval) {
+        if tutorialIsActive {
+            tutorialScene.update()
+        }
+        
+        orbCollision = false
+        
+        for orb in orbArray {
+            if orb.lightNode.falloff < 12 {
+                orb.lightNode.falloff += 0.2
             }
             else {
-                icon.texture = SKTexture(imageNamed: "icons_close.png")
-                
-                let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
-                popIn.timingMode = .easeOut
-                panelParentNode.run(popIn)
-                
-                volSlider.transform.ty -= 200
-                keyPicker.transform.ty -= 200
-                panelActive = true
+                orb.lightNode.falloff = 12
             }
+        }
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func setTutorialActive(_ bool: Bool) {
+        tutorialIsActive = bool
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    private func toggleControlPanel() {
+
+        if panelActive {
+            panelIcon.texture = SKTexture(imageNamed: "icons_control.png")
+            
+            let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
+            popOut.timingMode = .easeOut
+            panelParentNode.run(popOut)
+            
+            let popOutCA = CABasicAnimation(keyPath: "transform")
+            popOutCA.fillMode = .forwards
+            popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            popOutCA.duration = 0.5
+            popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
+            volSlider.layer.add(popOutCA, forKey: "transform")
+            keyPicker.layer.add(popOutCA, forKey: "transform")
+            
+            volSlider.transform.ty += 200
+            keyPicker.transform.ty += 200
+            panelActive = false
+        }
+        else {
+            panelIcon.texture = SKTexture(imageNamed: "icons_close.png")
+            
+            let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
+            popIn.timingMode = .easeOut
+            panelParentNode.run(popIn)
+            
+            let popInCA = CABasicAnimation(keyPath: "transform")
+            popInCA.fillMode = .forwards
+            popInCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            popInCA.duration = 0.5
+            popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
+            volSlider.layer.add(popInCA, forKey: "transform")
+            keyPicker.layer.add(popInCA, forKey: "transform")
+            
+            volSlider.transform.ty -= 200
+            keyPicker.transform.ty -= 200
+            panelActive = true
         }
     }
     
@@ -411,39 +469,18 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         orbSelected = colour
     }
     
-    @IBAction private func changeVolume(_ sender: UISlider!) {
-        audioManager.setVolume(to: Double(volSlider!.value))
-    }
-    
     private func updateKey() {
         for orb in orbArray {
             orb.orbSynth.setScale(scale: "\(keyRoot ?? "C")" + "\(keyTonality ?? "maj")")
         }
     }
     
-    override func update(_ currentTime: TimeInterval) {
-        if tutorialIsActive {
-            tutorialScene.update()
-        }
-        
-        orbCollision = false
-        
-        for orb in orbArray {
-            if orb.lightNode.falloff < 12 {
-                orb.lightNode.falloff += 0.2
-            }
-            else {
-                orb.lightNode.falloff = 12
-            }
-        }
-    }
-    
-    public func setTutorialActive(_ bool: Bool) {
-        tutorialIsActive = bool
+    @IBAction private func changeVolume(_ sender: UISlider!) {
+        audioManager.setVolume(to: Double(volSlider!.value))
     }
     
     
-    /* DATA PICKER PROTOCOLS */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * DATA PICKER PROTOCOLS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return pickerData.count
@@ -464,7 +501,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     }
     
     
-    /* CLASS SETTERS / GETTERS */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Returns true when a collision between two orbs is registered.
     public func hasOrbCollided() -> Bool {
