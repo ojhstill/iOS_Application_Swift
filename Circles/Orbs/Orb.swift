@@ -16,8 +16,9 @@ class Orb: SKSpriteNode {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    public var orbSynth:    OrbSynth!                   //
-    public var lightNode:   SKLightNode!                //
+    // Define orb varibles:
+    public var orbSynth:    OrbSynth!                   // The main audio source for sound generation.
+    public var lightNode:   SKLightNode!                // Node containing the dynamic light source in the centre of the orb.
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,10 +31,9 @@ class Orb: SKSpriteNode {
         self.name = "defaultOrb"
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
         
-        // Create SKLightNode
+        // Create SKLightNode.
         lightNode = SKLightNode()
         lightNode.position = .zero
-        lightNode.categoryBitMask = 1
         lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
         lightNode.ambientColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
         lightNode.falloff = 12
@@ -106,9 +106,9 @@ class Orb: SKSpriteNode {
         self.physicsBody!.fieldBitMask = 1
         self.physicsBody!.contactTestBitMask = 1
         
-        // Set sprite node's light mask values.
+        // Set default orb light mask values.
         self.lightingBitMask = 1
-        self.shadowedBitMask = 1
+        self.shadowedBitMask = 0
         self.shadowCastBitMask = 0
     }
 }

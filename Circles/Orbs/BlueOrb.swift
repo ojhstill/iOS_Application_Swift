@@ -15,9 +15,10 @@ class BlueOrb: Orb {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    public var reverb:      AKReverb!                   //
-    public var delay:       AKDelay!                    //
-    public var tremolo:     AKTremolo!                  //
+    // Define AudioKit effects:
+    public var reverb:      AKReverb!                   // Reverb effect processing module from AudioKit (originates within OrbSynth).
+    public var delay:       AKDelay!                    // Delay effect processing module from AudioKit (originates within OrbSynth).
+    public var tremolo:     AKTremolo!                  // Tremolo effect processing module from AudioKit (originates within OrbSynth).
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,9 +31,6 @@ class BlueOrb: Orb {
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
         self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
         self.lightNode.ambientColor = .white
-        self.lightNode.categoryBitMask = 1
-        self.lightingBitMask = 1
-        self.shadowedBitMask = 1
         
         self.orbSynth.waveform = AKTable(.sine)
         

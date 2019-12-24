@@ -18,7 +18,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define application managers:
-    weak    var viewController:             GameViewController!                 // Manages the scene's view and communicates with the UIKit.
+    weak    var viewController:             GameViewController!                 // Weak storage of the scene's view to communicate with controller.
     private var motionManager:              CMMotionManager!                    // Manages CoreMotion library and accelerometer data.
     private var audioManager:               AudioManager!                       // Manages audio output using AudioKit.
     
@@ -65,9 +65,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         
         // Set the physics body to the edge of the screen.
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
-        
-        // Setup view controller.
-        viewController.currentScene = self
         
         // Setup audio manager (and AudioKit).
         audioManager = AudioManager()
@@ -219,6 +216,14 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             // Add new dynamic orb to scene and the orb array.
             orbArray.append(newOrb)
             sandboxParentNode.addChild(orbArray[orbArray.count - 1])
+            
+            // Update the scale of the new orb.
+            updateKey()
+            
+            // Give the orb a unique lighting bit mask to ensure light sources do not constructively interfere.
+            newOrb.lightingBitMask = UInt32(orbArray.count + 1)
+            newOrb.shadowedBitMask = UInt32(orbArray.count + 1)
+            newOrb.lightNode.categoryBitMask = UInt32(orbArray.count + 1)
             
             // Add new orb's synth to the audio mixer.
             newOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
@@ -391,13 +396,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     }
     
     
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    public func setTutorialActive(_ bool: Bool) {
-        tutorialIsActive = bool
-    }
-    
-    
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     private func toggleControlPanel() {
@@ -502,6 +500,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    // Sets the tutorial to trigger at initalisation if active.
+    public func setTutorialActive(_ bool: Bool) {
+        tutorialIsActive = bool
+    }
     
     // Returns true when a collision between two orbs is registered.
     public func hasOrbCollided() -> Bool {

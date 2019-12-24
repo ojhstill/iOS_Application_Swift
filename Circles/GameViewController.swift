@@ -13,9 +13,10 @@ class GameViewController: UIViewController {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    public var currentScene:    SKScene!                    //
-    weak   var menuScene:       MenuScene!                  //
-    weak   var sandboxScene:    SandboxScene!               //
+    // Define controller varibles:
+    private var currentScene:   SKScene!                    // SKScene to store the currently active displayed scene.
+    weak   var menuScene:       MenuScene!                  // Weak storage of the menu scene to communicate with UIKit elements.
+    weak   var sandboxScene:    SandboxScene!               // Weak storage of the sandbox scene to communicate with UIKit elements.
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -63,5 +64,12 @@ class GameViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+    public func setCurrentScene(to scene: SKScene) {
+        currentScene = scene
     }
 }

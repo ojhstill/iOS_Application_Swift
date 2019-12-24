@@ -14,14 +14,14 @@ class OrbSynth: AKFMOscillatorBank {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    // Define class variables.
-    private var MIDINoteArray:  [Int]!                  //
-    private var octaveRange:    Int!                    //
+    // Define orb synth variables:
+    private var MIDINoteArray:  [Int]!                  // Array containing the MIDI note values to play, defined by the chosen key.
+    private var octaveRange:    Int!                    // The octave range multiplier defined by the respective size of the orb.
     
-    // Define AudioKit effects.
-    var reverb:                 AKReverb!               //
-    var delay:                  AKDelay!                //
-    var tremolo:                AKTremolo!              //
+    // Define AudioKit effects:
+    var reverb:                 AKReverb!               // Reverb effect processing module from AudioKit.
+    var delay:                  AKDelay!                // Delay effect processing module from AudioKit.
+    var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
     
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -29,18 +29,19 @@ class OrbSynth: AKFMOscillatorBank {
     // MIDI note value dictionary from C0 to B0.
     let MIDINoteValues = ["C": 12, "Db": 13, "D": 14, "Eb": 15, "E": 16, "F": 17, "Gb": 18, "G": 19, "Ab": 20, "A": 21, "Bb": 22, "B": 23]
     
-    let scales = ["Cmaj":  ["A",  "C",  "D",  "E",  "G" ], "Amin":  ["A",  "C",  "D",  "E",  "G" ],
-                  "Dbmaj": ["Bb", "Db", "Eb", "F",  "Ab"], "Bbmin": ["Bb", "Db", "Eb", "F",  "Ab"],
-                  "Dmaj":  ["B",  "D",  "E",  "Gb", "A" ], "Bmin":  ["B",  "D",  "E",  "Gb", "A" ],
-                  "Ebmaj": ["C",  "Eb", "F",  "G",  "Bb"], "Cmin":  ["C",  "Eb", "F",  "G",  "Bb"],
-                  "Emaj":  ["Db", "E",  "Gb", "Ab", "B" ], "Dbmin": ["Db", "E",  "Gb", "Ab", "B" ],
-                  "Fmaj":  ["D",  "F",  "G",  "A",  "C" ], "Dmin":  ["D",  "F",  "G",  "A",  "C" ],
+    // Dictionary containing the required notes for each respective scale.
+    let scales = ["Cmaj":  ["A" , "C" , "D" , "E" , "G" ], "Amin":  ["A" , "C" , "D" , "E" , "G" ],
+                  "Dbmaj": ["Bb", "Db", "Eb", "F" , "Ab"], "Bbmin": ["Bb", "Db", "Eb", "F" , "Ab"],
+                  "Dmaj":  ["B" , "D" , "E" , "Gb", "A" ], "Bmin":  ["B" , "D" , "E" , "Gb", "A" ],
+                  "Ebmaj": ["C" , "Eb", "F" , "G" , "Bb"], "Cmin":  ["C" , "Eb", "F" , "G" , "Bb"],
+                  "Emaj":  ["Db", "E" , "Gb", "Ab", "B" ], "Dbmin": ["Db", "E" , "Gb", "Ab", "B" ],
+                  "Fmaj":  ["D" , "F" , "G" , "A" , "C" ], "Dmin":  ["D" , "F" , "G" , "A" , "C" ],
                   "Gbmaj": ["Eb", "Gb", "Ab", "Bb", "Db"], "Ebmin": ["Eb", "Gb", "Ab", "Bb", "Db"],
-                  "Gmaj":  ["E",  "G",  "A",  "B",  "D" ], "Emin":  ["E",  "G",  "A",  "B",  "D" ],
-                  "Abmaj": ["F",  "Ab", "Bb", "C",  "Eb"], "Fmin":  ["F",  "Ab", "Bb", "C",  "Eb"],
-                  "Amaj":  ["Gb", "A",  "B",  "Db", "E" ], "Gbmin": ["Gb", "A",  "B",  "Db", "E" ],
-                  "Bbmaj": ["G",  "Bb", "C",  "D",  "F" ], "Gmin":  ["G",  "Bb", "C",  "D",  "F" ],
-                  "Bmaj":  ["Ab", "B",  "Db", "Eb", "Gb"], "Abmin": ["Ab", "B",  "Db", "Eb", "Gb"]]
+                  "Gmaj":  ["E" , "G" , "A" , "B" , "D" ], "Emin":  ["E" , "G" , "A" , "B" , "D" ],
+                  "Abmaj": ["F" , "Ab", "Bb", "C" , "Eb"], "Fmin":  ["F" , "Ab", "Bb", "C" , "Eb"],
+                  "Amaj":  ["Gb", "A" , "B" , "Db", "E" ], "Gbmin": ["Gb", "A" , "B" , "Db", "E" ],
+                  "Bbmaj": ["G" , "Bb", "C" , "D" , "F" ], "Gmin":  ["G" , "Bb", "C" , "D" , "F" ],
+                  "Bmaj":  ["Ab", "B" , "Db", "Eb", "Gb"], "Abmin": ["Ab", "B" , "Db", "Eb", "Gb"]]
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -68,7 +69,7 @@ class OrbSynth: AKFMOscillatorBank {
         self.setScale(scale: "Cmaj")
         self.waveform = AKTable(.sine)
         
-        // Link audio outputs
+        // Link audio outputs.
         self.setOutput(to: delay)
         delay.setOutput(to: reverb)
         reverb.setOutput(to: tremolo)
@@ -87,10 +88,6 @@ class OrbSynth: AKFMOscillatorBank {
     
     public func disconnectOrbSynthOutput() {
         tremolo.disconnectOutput()
-    }
-    
-    public func setOctaveRange(octave: Int) {
-        octaveRange = octave
     }
     
     
@@ -139,5 +136,12 @@ class OrbSynth: AKFMOscillatorBank {
             // Print note data to console.
             print("[OrbSynth.swift] Playing note: \(MIDINote) of velocity \(MIDIVelocity)")
         }
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func setOctaveRange(octave: Int) {
+        octaveRange = octave
     }
 }

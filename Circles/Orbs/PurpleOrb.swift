@@ -15,9 +15,10 @@ class PurpleOrb: Orb {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    public var reverb:      AKReverb!                   //
-    public var delay:       AKDelay!                    //
-    public var tremolo:     AKTremolo!                  //
+    // Define AudioKit effects:
+    public var reverb:      AKReverb!                   // Reverb effect processing module from AudioKit (originates within OrbSynth).
+    public var delay:       AKDelay!                    // Delay effect processing module from AudioKit (originates within OrbSynth).
+    public var tremolo:     AKTremolo!                  // Tremolo effect processing module from AudioKit (originates within OrbSynth).
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -30,9 +31,6 @@ class PurpleOrb: Orb {
         self.texture = SKTexture(imageNamed: "purpleOrbSprite")
         self.lightNode.lightColor = .init(red: 255, green: 75, blue: 255, alpha: 0.5)
         self.lightNode.ambientColor = .white
-        self.lightNode.categoryBitMask = 2
-        self.lightingBitMask = 2
-        self.shadowedBitMask = 2
         
         self.orbSynth.waveform = AKTable(.positiveSawtooth)
         

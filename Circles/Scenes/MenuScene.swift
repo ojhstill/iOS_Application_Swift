@@ -15,7 +15,7 @@ class MenuScene: SKScene {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define menu scene varibles:
-    weak    var viewController:     GameViewController!         // Manages the scene's view and communicates with the UIKit.
+    weak    var viewController:     GameViewController!         // Weak storage of the scene's view to communicate with controller.
     private var tutorialActive:     Bool!                       // Boolean to trigger the tutorial when game starts.
 
 
@@ -85,7 +85,7 @@ class MenuScene: SKScene {
         if let sandboxScene = SandboxScene(fileNamed: "SandboxScene") {
             
             // Assign weak storage of sandboxScene inside the viewController.
-            viewController.currentScene = sandboxScene
+            viewController.setCurrentScene(to: sandboxScene)
             viewController.sandboxScene = sandboxScene
             sandboxScene.viewController = self.viewController
             
