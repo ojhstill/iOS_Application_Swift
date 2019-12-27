@@ -136,6 +136,51 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             tutorialScene = TutorialScene(target: self)
         }
     }
+
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func toggleControlPanel() {
+        
+        if panelActive {
+            panelIcon.texture = SKTexture(imageNamed: "icons_control.png")
+            
+            let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
+            popOut.timingMode = .easeOut
+            panelParentNode.run(popOut)
+            
+            let popOutCA = CABasicAnimation(keyPath: "transform")
+            popOutCA.fillMode = .forwards
+            popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            popOutCA.duration = 0.5
+            popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
+            volSlider.layer.add(popOutCA, forKey: "transform")
+            keyPicker.layer.add(popOutCA, forKey: "transform")
+            
+            volSlider.transform.ty += 200
+            keyPicker.transform.ty += 200
+            panelActive = false
+        }
+        else {
+            panelIcon.texture = SKTexture(imageNamed: "icons_close.png")
+            
+            let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
+            popIn.timingMode = .easeOut
+            panelParentNode.run(popIn)
+            
+            let popInCA = CABasicAnimation(keyPath: "transform")
+            popInCA.fillMode = .forwards
+            popInCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
+            popInCA.duration = 0.5
+            popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
+            volSlider.layer.add(popInCA, forKey: "transform")
+            keyPicker.layer.add(popInCA, forKey: "transform")
+            
+            volSlider.transform.ty -= 200
+            keyPicker.transform.ty -= 200
+            panelActive = true
+        }
+    }
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * USER GESTURE ACTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
@@ -397,48 +442,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-    
-    private func toggleControlPanel() {
-
-        if panelActive {
-            panelIcon.texture = SKTexture(imageNamed: "icons_control.png")
-            
-            let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
-            popOut.timingMode = .easeOut
-            panelParentNode.run(popOut)
-            
-            let popOutCA = CABasicAnimation(keyPath: "transform")
-            popOutCA.fillMode = .forwards
-            popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            popOutCA.duration = 0.5
-            popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
-            volSlider.layer.add(popOutCA, forKey: "transform")
-            keyPicker.layer.add(popOutCA, forKey: "transform")
-            
-            volSlider.transform.ty += 200
-            keyPicker.transform.ty += 200
-            panelActive = false
-        }
-        else {
-            panelIcon.texture = SKTexture(imageNamed: "icons_close.png")
-            
-            let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
-            popIn.timingMode = .easeOut
-            panelParentNode.run(popIn)
-            
-            let popInCA = CABasicAnimation(keyPath: "transform")
-            popInCA.fillMode = .forwards
-            popInCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            popInCA.duration = 0.5
-            popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
-            volSlider.layer.add(popInCA, forKey: "transform")
-            keyPicker.layer.add(popInCA, forKey: "transform")
-            
-            volSlider.transform.ty -= 200
-            keyPicker.transform.ty -= 200
-            panelActive = true
-        }
-    }
     
     private func selectOrb(colour: String) {
         let blueOrbButton   = panelParentNode.childNode(withName: "controlPanelBlueOrb")

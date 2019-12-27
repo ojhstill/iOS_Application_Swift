@@ -171,6 +171,11 @@ class TutorialScene {
             let orbs = sandboxScene.getOrbArray()
             let orbName = orbs[orbs.count - 1].name
             if orbName == "purpleOrb" || orbName == "redOrb" {
+                
+                // Collapse control panel is it is active.
+                if sandboxScene.isControlPanelActive() {
+                    sandboxScene.toggleControlPanel()
+                }
                 userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
                 readyToAdvance = true
             }
@@ -189,6 +194,7 @@ class TutorialScene {
         
         // If user has completed the tutorial task and the overlay is off, increase the sequence to the next state.
         if readyToAdvance && tutorialOverlay.alpha == 0.0 {
+            
             toggleTutorialOverlay()
             sequenceState += 1
             tutorialSequence()
