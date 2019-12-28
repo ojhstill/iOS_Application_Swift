@@ -176,6 +176,7 @@ class TutorialScene {
                 if sandboxScene.isControlPanelActive() {
                     sandboxScene.toggleControlPanel()
                 }
+                
                 userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
                 readyToAdvance = true
             }

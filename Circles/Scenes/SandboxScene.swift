@@ -29,6 +29,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     private var orbGraphicArray:            [SKSpriteNode]!                     // Graphic array use to reset all sprites before an orb's creation.
     private var orbArray:                   [Orb]!                              // Array to hold all active orbs in the sandbox.
     private var orbCollision:               Bool!                               // Boolean to trigger momentarily after each orb collision.
+    private var blackHoleGravity:           SKFieldNode!                        // Radial gravity field located in the middle of the sandbox.
     private var helpOverlay:                SKSpriteNode!                       // Node to display the help overlay triggered by the help icon.
     
     // Define control panel varibles:
@@ -76,8 +77,20 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         motionManager.accelerometerUpdateInterval = 0.1
         motionManager.startAccelerometerUpdates(to: OperationQueue.main) {
             (data, error) in
+            // Setup sandbox gravity to the external device accelerometer.
             self.physicsWorld.gravity = CGVector(dx: CGFloat((data?.acceleration.x)!) * 2, dy: CGFloat((data?.acceleration.y)!) * 2)
         }
+        
+        // Setup 'black hole' gravity point (disabled).
+        gravityPoint = SKFieldNode.radialGravityField()
+        gravityPoint.categoryBitMask = 1
+        gravityPoint.strength = 1.0
+        gravityPoint.falloff = 1.0
+        gravityPoint.minimumRadius = 50.0
+        gravityPoint.position = .zero
+        gravityPoint.isEnabled = false
+        gravityPoint.isExclusive = true
+        self.addChild(gravityPoint)
         
         // Setup all scene nodes to accessible class vairbles.
         sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
@@ -156,9 +169,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
             volSlider.layer.add(popOutCA, forKey: "transform")
             keyPicker.layer.add(popOutCA, forKey: "transform")
-            
             volSlider.transform.ty += 200
             keyPicker.transform.ty += 200
+            
             panelActive = false
         }
         else {
@@ -175,9 +188,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
             volSlider.layer.add(popInCA, forKey: "transform")
             keyPicker.layer.add(popInCA, forKey: "transform")
-            
             volSlider.transform.ty -= 200
             keyPicker.transform.ty -= 200
+            
             panelActive = true
         }
     }
@@ -266,6 +279,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             updateKey()
             
             // Give the orb a unique lighting bit mask to ensure light sources do not constructively interfere.
+            // *** This feature is currently broken due to the SpriteKit lighting behaviour not working effectively. ***
             newOrb.lightingBitMask = UInt32(orbArray.count + 1)
             newOrb.shadowedBitMask = UInt32(orbArray.count + 1)
             newOrb.lightNode.categoryBitMask = UInt32(orbArray.count + 1)
@@ -413,6 +427,26 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                         helpIcon.texture = SKTexture(imageNamed: "icons_help.png")
                         helpOverlay.run(SKAction.fadeOut(withDuration: 1))
                     }
+                }
+            }
+            else if node.name == "controlPanelBlackHoleLabel" {
+                
+                // Get the 'controlPanelBlackHoleLabel' node from SandboxScene.
+                if let blackHoleLabel = panelParentNode.childNode(withName: "controlPanelBlackHoleLabel") as? SKLabelNode {
+                    
+                    // If gravityPoint is enabled, ...
+                    if blackHoleGravity.isEnabled {
+                        // Change the label text and disale the radial field.
+                        blackHoleLabel.text = "BLACK HOLE OFF"
+                        blackHoleGravity.isEnabled = false
+                    }
+                    else {
+                        // Change the label text and enable the radial field.
+                        blackHoleLabel.text = "BLACK HOLE ON"
+                        blackHoleGravity.isEnabled = true
+                    }
+                    
+                    print("[SandboxScene.swift] Black Hole gravity set \(blackHoleGravity.isEnabled)")
                 }
             }
         }
