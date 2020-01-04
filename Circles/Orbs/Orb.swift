@@ -19,6 +19,13 @@ class Orb: SKSpriteNode {
     // Define orb varibles:
     public var orbSynth:    OrbSynth!                   // The main audio source for sound generation.
     public var lightNode:   SKLightNode!                // Node containing the dynamic light source in the centre of the orb.
+    
+    // Define AudioKit effects:
+    var reverb:      AKReverb!                   // Reverb effect processing module from AudioKit (originates within OrbSynth).
+    var delay:       AKDelay!                    // Delay effect processing module from AudioKit (originates within OrbSynth).
+    var flanger:     AKFlanger!                  // Flanger effect processing module from AudioKit (originates within OrbSynth).
+    var distortion:  AKDecimator!                // Distortion effect processing module from AudioKit (originates within OrbSynth).
+    var tremolo:     AKTremolo!                  // Tremolo effect processing module from AudioKit (originates within OrbSynth).
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -42,6 +49,13 @@ class Orb: SKSpriteNode {
         
         // Initalise orb synth.
         orbSynth = OrbSynth()
+        
+        // Access orb synth effect varibles.
+        reverb      = self.orbSynth.reverb
+        delay       = self.orbSynth.delay
+        flanger     = self.orbSynth.flanger
+        distortion  = self.orbSynth.distortion
+        tremolo     = self.orbSynth.tremolo
     }
     
     // Convenience init() function:

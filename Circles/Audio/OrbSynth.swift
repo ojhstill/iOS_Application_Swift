@@ -21,6 +21,8 @@ class OrbSynth: AKFMOscillatorBank {
     // Define AudioKit effects:
     var reverb:                 AKReverb!               // Reverb effect processing module from AudioKit.
     var delay:                  AKDelay!                // Delay effect processing module from AudioKit.
+    var flanger:                AKFlanger!              // Flanger effect processing module from AudioKit.
+    var distortion:             AKDecimator!            // Distortion effect processing module from AudioKit.
     var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
     
     
@@ -58,9 +60,27 @@ class OrbSynth: AKFMOscillatorBank {
         self.rampDuration    = 0.00
         
         // Initalise AudioKit effect parameters.
-        delay   = AKDelay()
-        reverb  = AKReverb()
+        delay = AKDelay()
+        delay.dryWetMix = 0.0
+        delay.feedback = 0.7
+        delay.time = 0.6
+        
+        reverb = AKReverb()
+        reverb.dryWetMix = 0.0
+        reverb.loadFactoryPreset(.largeHall)
+        
+        flanger = AKFlanger()
+        flanger.depth = 0.0
+        flanger.frequency = 0.3
+        flanger.feedback = 0.6
+        
+        distortion = AKDecimator()
+        distortion.mix = 0.0
+        distortion.decimation = 0.08
+        
         tremolo = AKTremolo()
+        tremolo.depth = 0.0
+        tremolo.frequency = 3.0
         
         // Setup MIDI array for the chosen synth scale.
         MIDINoteArray = [Int]()
@@ -72,7 +92,9 @@ class OrbSynth: AKFMOscillatorBank {
         // Link audio outputs.
         self.setOutput(to: delay)
         delay.setOutput(to: reverb)
-        reverb.setOutput(to: tremolo)
+        reverb.setOutput(to: flanger)
+        flanger.setOutput(to: distortion)
+        distortion.setOutput(to: tremolo)
     }
     
     required public init?(coder aDecoder: NSCoder) {

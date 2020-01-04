@@ -387,6 +387,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Circles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -410,6 +411,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = Circles/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

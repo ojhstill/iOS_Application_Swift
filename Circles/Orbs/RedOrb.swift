@@ -13,14 +13,6 @@ import AudioKit
 
 class RedOrb: Orb {
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-    // Define AudioKit effects:
-    public var reverb:      AKReverb!                   // Reverb effect processing module from AudioKit (originates within OrbSynth).
-    public var delay:       AKDelay!                    // Delay effect processing module from AudioKit (originates within OrbSynth).
-    public var tremolo:     AKTremolo!                  // Tremolo effect processing module from AudioKit (originates within OrbSynth).
-
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Designated init() function:
@@ -29,23 +21,11 @@ class RedOrb: Orb {
         
         self.name = "redOrb"
         self.texture = SKTexture(imageNamed: "redOrbSprite")
-        self.lightNode.lightColor = .init(red: 255, green: 50, blue: 75, alpha: 0.5)
+        self.lightNode.lightColor = .init(red: 255, green: 75, blue: 50, alpha: 0.7)
         self.lightNode.ambientColor = .white
+        self.lightNode.falloff = 12
         
         self.orbSynth.waveform = AKTable(.triangle)
-        
-        reverb = self.orbSynth.reverb
-        reverb.dryWetMix = 0.6
-        reverb.loadFactoryPreset(.largeHall)
-        
-        delay = self.orbSynth.delay
-        delay.dryWetMix = 0.3
-        delay.feedback = 0.6
-        delay.time = 0.2
-        
-        tremolo = self.orbSynth.tremolo
-        tremolo.depth = 0.1
-        tremolo.frequency = 4
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -60,23 +40,27 @@ class RedOrb: Orb {
         // Change the effects of the orb's synth based on the type of orb that it collides with.
         switch orbName {
             case "blueOrb":
-                // Effect: SOFT REVERB
-                reverb.dryWetMix    = 0.9
-                delay.dryWetMix     = 0.0
-                tremolo.frequency   = 1.0
-                tremolo.depth       = 0.3
+                // Effect: SOFT CRUSHED DELAY
+                reverb.dryWetMix    = 0.7
+                delay.dryWetMix     = 0.5
+                flanger.depth       = 0.0
+                distortion.mix      = 0.2
+                tremolo.depth       = 0.0
                 
             case "purpleOrb":
-                // Effect: SOFT TREMOLO
-                reverb.dryWetMix    = 0.7
-                delay.dryWetMix     = 0.0
-                tremolo.frequency   = 2.0
+                // Effect: HARD CRUSHED TREMOLO FLANGER
+                reverb.dryWetMix    = 0.0
+                delay.dryWetMix     = 0.2
+                flanger.depth       = 0.8
+                distortion.mix      = 0.5
                 tremolo.depth       = 0.9
                 
             case "redOrb":
-                // Effect: SOFT DELAY
-                reverb.dryWetMix    = 0.4
-                delay.dryWetMix     = 0.9
+                // Effect: HARD DELAY
+                reverb.dryWetMix    = 0.1
+                delay.dryWetMix     = 0.5
+                flanger.depth       = 0.0
+                distortion.mix      = 0.0
                 tremolo.depth       = 0.0
                 
             default:

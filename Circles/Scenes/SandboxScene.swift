@@ -81,16 +81,16 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             self.physicsWorld.gravity = CGVector(dx: CGFloat((data?.acceleration.x)!) * 2, dy: CGFloat((data?.acceleration.y)!) * 2)
         }
         
-        // Setup 'black hole' gravity point (disabled).
-        gravityPoint = SKFieldNode.radialGravityField()
-        gravityPoint.categoryBitMask = 1
-        gravityPoint.strength = 1.0
-        gravityPoint.falloff = 1.0
-        gravityPoint.minimumRadius = 50.0
-        gravityPoint.position = .zero
-        gravityPoint.isEnabled = false
-        gravityPoint.isExclusive = true
-        self.addChild(gravityPoint)
+        // Setup 'black hole' gravity point (disabled by default).
+        blackHoleGravity = SKFieldNode.radialGravityField()
+        blackHoleGravity.categoryBitMask = 1
+        blackHoleGravity.strength = 1.0
+        blackHoleGravity.falloff = 2.0
+        blackHoleGravity.minimumRadius = 200
+        blackHoleGravity.position = .zero
+        blackHoleGravity.isEnabled = false
+        blackHoleGravity.isExclusive = true
+        self.addChild(blackHoleGravity)
         
         // Setup all scene nodes to accessible class vairbles.
         sandboxParentNode = self.childNode(withName: "sandboxSceneNode")
@@ -158,17 +158,21 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         if panelActive {
             panelIcon.texture = SKTexture(imageNamed: "icons_control.png")
             
-            let popOut = SKAction.moveBy(x: 0, y: -200, duration: 0.5)
-            popOut.timingMode = .easeOut
-            panelParentNode.run(popOut)
+            let popOutSK = SKAction.moveBy(x: 0, y: -200, duration: 0.3)
+            popOutSK.timingMode = .linear
             
             let popOutCA = CABasicAnimation(keyPath: "transform")
             popOutCA.fillMode = .forwards
-            popOutCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            popOutCA.duration = 0.5
+            popOutCA.timingFunction = CAMediaTimingFunction(name: .linear)
+            popOutCA.duration = 0.3
             popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
+            
+            // Run animations.
+            panelParentNode.run(popOutSK)
             volSlider.layer.add(popOutCA, forKey: "transform")
             keyPicker.layer.add(popOutCA, forKey: "transform")
+            
+            // Update the position of the UIKit elements.
             volSlider.transform.ty += 200
             keyPicker.transform.ty += 200
             
@@ -177,17 +181,21 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         else {
             panelIcon.texture = SKTexture(imageNamed: "icons_close.png")
             
-            let popIn = SKAction.moveBy(x: 0, y: 200, duration: 0.5)
-            popIn.timingMode = .easeOut
-            panelParentNode.run(popIn)
+            let popInSK = SKAction.moveBy(x: 0, y: 200, duration: 0.3)
+            popInSK.timingMode = .linear
             
             let popInCA = CABasicAnimation(keyPath: "transform")
             popInCA.fillMode = .forwards
-            popInCA.timingFunction = CAMediaTimingFunction(name: .easeOut)
-            popInCA.duration = 0.5
+            popInCA.timingFunction = CAMediaTimingFunction(name: .linear)
+            popInCA.duration = 0.3
             popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
+            
+            // Run animations.
+            panelParentNode.run(popInSK)
             volSlider.layer.add(popInCA, forKey: "transform")
             keyPicker.layer.add(popInCA, forKey: "transform")
+            
+            // Update the position of the UIKit elements.
             volSlider.transform.ty -= 200
             keyPicker.transform.ty -= 200
             
@@ -331,7 +339,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     func didBegin(_ contact: SKPhysicsContact) {
         
         // Calibrate impulse of collision to around the velocity range.
-        var velocity = Int(contact.collisionImpulse / 30000)
+        var velocity = Int(contact.collisionImpulse / 100000)
         
         // Normalise velocity value for UInt8 MIDI data.
         if velocity > 127 {
@@ -343,10 +351,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         let bodyB = contact.bodyB.node!
         
         // Trigger soundscape if collision is between two orbs and if impluse is significant enough.
-        // (Prevents notes playing when contact bodies are rolling over each other / velocities of 10 or less.)
+        // (Prevents notes playing when contact bodies are rolling over each other / velocities of 20 or less.)
         if (bodyA.name == "blueOrb" || bodyA.name == "purpleOrb" || bodyA.name == "redOrb") &&
            (bodyB.name == "blueOrb" || bodyB.name == "purpleOrb" || bodyB.name == "redOrb") &&
-           (velocity >= 10) {
+           (velocity >= 20) {
             
             orbCollision = true
             
@@ -359,12 +367,12 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 orb.play(velocity: UInt8(velocity))
             }
             
-            if let orb = bodyA as? PurpleOrb {
+            else if let orb = bodyA as? PurpleOrb {
                 orb.changeEffects(collisionWith: bodyB.name)
                 orb.play(velocity: UInt8(velocity))
             }
             
-            if let orb = bodyA as? RedOrb {
+            else if let orb = bodyA as? RedOrb {
                 orb.changeEffects(collisionWith: bodyB.name)
                 orb.play(velocity: UInt8(velocity))
             }
@@ -376,12 +384,12 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 orb.play(velocity: UInt8(velocity))
             }
             
-            if let orb = bodyB as? PurpleOrb {
+            else if let orb = bodyB as? PurpleOrb {
                 orb.changeEffects(collisionWith: bodyA.name)
                 orb.play(velocity: UInt8(velocity))
             }
             
-            if let orb = bodyB as? RedOrb {
+            else if let orb = bodyB as? RedOrb {
                 orb.changeEffects(collisionWith: bodyA.name)
                 orb.play(velocity: UInt8(velocity))
             }
@@ -420,34 +428,17 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                     // If overlay is off, fade in.
                     if helpOverlay.alpha == 0 {
                         helpIcon.texture = SKTexture(imageNamed: "icons_close.png")
-                        helpOverlay.run(SKAction.fadeIn(withDuration: 1))
+                        helpOverlay.run(SKAction.fadeIn(withDuration: 0.2))
                     }
                     // Else if the overlay is on, fade out.
                     else if helpOverlay.alpha == 1 {
                         helpIcon.texture = SKTexture(imageNamed: "icons_help.png")
-                        helpOverlay.run(SKAction.fadeOut(withDuration: 1))
+                        helpOverlay.run(SKAction.fadeOut(withDuration: 0.2))
                     }
                 }
             }
             else if node.name == "controlPanelBlackHoleLabel" {
-                
-                // Get the 'controlPanelBlackHoleLabel' node from SandboxScene.
-                if let blackHoleLabel = panelParentNode.childNode(withName: "controlPanelBlackHoleLabel") as? SKLabelNode {
-                    
-                    // If gravityPoint is enabled, ...
-                    if blackHoleGravity.isEnabled {
-                        // Change the label text and disale the radial field.
-                        blackHoleLabel.text = "BLACK HOLE OFF"
-                        blackHoleGravity.isEnabled = false
-                    }
-                    else {
-                        // Change the label text and enable the radial field.
-                        blackHoleLabel.text = "BLACK HOLE ON"
-                        blackHoleGravity.isEnabled = true
-                    }
-                    
-                    print("[SandboxScene.swift] Black Hole gravity set \(blackHoleGravity.isEnabled)")
-                }
+                toggleBlackHole()
             }
         }
         
@@ -502,6 +493,38 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         }
         
         orbSelected = colour
+    }
+    
+    private func toggleBlackHole() {
+        
+        // Get the 'controlPanelBlackHoleLabel' node from SandboxScene.
+        if let blackHoleLabel = panelParentNode.childNode(withName: "controlPanelBlackHoleLabel") as? SKLabelNode {
+            
+            // If gravityPoint is enabled, ...
+            if blackHoleGravity.isEnabled {
+                // Change the label text and disable the radial field.
+                blackHoleLabel.text = "BLACK HOLE OFF"
+                blackHoleGravity.isEnabled = false
+                
+                // Set gravity to device accelerometer.
+                motionManager.startAccelerometerUpdates(to: OperationQueue.main) {
+                    (data, error) in
+                    // Setup sandbox gravity to the external device accelerometer.
+                    self.physicsWorld.gravity = CGVector(dx: CGFloat((data?.acceleration.x)!) * 2, dy: CGFloat((data?.acceleration.y)!) * 2)
+                }
+            }
+            else {
+                // Change the label text and enable the radial field.
+                blackHoleLabel.text = "BLACK HOLE ON"
+                blackHoleGravity.isEnabled = true
+                
+                // Stop accelermeter updates.
+                motionManager.stopAccelerometerUpdates()
+                self.physicsWorld.gravity = .zero
+            }
+            
+            print("[SandboxScene.swift] Black Hole gravity set \(blackHoleGravity.isEnabled)")
+        }
     }
     
     private func updateKey() {
