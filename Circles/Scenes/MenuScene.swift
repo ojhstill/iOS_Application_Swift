@@ -42,8 +42,11 @@ class MenuScene: SKScene {
         
         // Get 'menuOrbSprite' SKSpriteNode from MenuScene.
         if let orbSprite = self.childNode(withName: "menuOrbSprite") as? SKSpriteNode {
-            // Pulse sprite.
+            // Fade in and pulse label.
+            orbSprite.alpha = 0.0
             orbSprite.run(SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!))
+            orbSprite.run(SKAction.sequence([SKAction.wait(forDuration: 0.5),
+                                             SKAction.fadeIn(withDuration: 1)]))
             
             // Get 'orbLightNode' SKLightNode from MenuScene.
             if let lightNode = orbSprite.childNode(withName: "orbLightNode") as? SKLightNode {
@@ -55,7 +58,7 @@ class MenuScene: SKScene {
             // Get 'menuTitleLabel' SKLabelNode from MenuScene.
             if let titleLabel = orbSprite.childNode(withName: "menuTitleLabel") as? SKLabelNode {
                 // Pulse label with 'menuOrbSprite'.
-                titleLabel.run(SKAction.sequence([SKAction.wait(forDuration: 0.4),
+                titleLabel.run(SKAction.sequence([SKAction.wait(forDuration: 1),
                                                   SKAction.repeatForever(SKAction.init(named: "PulseScale105", duration: 10)!)]))
             }
         }

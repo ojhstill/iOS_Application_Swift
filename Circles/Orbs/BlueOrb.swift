@@ -21,7 +21,7 @@ class BlueOrb: Orb {
         
         self.name = "blueOrb"
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
-        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
+        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.9)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         

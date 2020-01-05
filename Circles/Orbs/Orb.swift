@@ -17,15 +17,16 @@ class Orb: SKSpriteNode {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     // Define orb varibles:
-    public var orbSynth:    OrbSynth!                   // The main audio source for sound generation.
-    public var lightNode:   SKLightNode!                // Node containing the dynamic light source in the centre of the orb.
+    public var orbSynth:    OrbSynth!               // The main audio source for sound generation.
+    public var lightNode:   SKLightNode!            // Node containing the dynamic light source in the centre of the orb.
+    public var octaveRange: Int!                    // Octave range that the orb's synth is limited to, dependent on the orb's size.
     
     // Define AudioKit effects:
-    var reverb:      AKReverb!                   // Reverb effect processing module from AudioKit (originates within OrbSynth).
-    var delay:       AKDelay!                    // Delay effect processing module from AudioKit (originates within OrbSynth).
-    var flanger:     AKFlanger!                  // Flanger effect processing module from AudioKit (originates within OrbSynth).
-    var distortion:  AKDecimator!                // Distortion effect processing module from AudioKit (originates within OrbSynth).
-    var tremolo:     AKTremolo!                  // Tremolo effect processing module from AudioKit (originates within OrbSynth).
+    var reverb:      AKReverb!                      // Reverb effect processing module from AudioKit (originates within OrbSynth).
+    var delay:       AKDelay!                       // Delay effect processing module from AudioKit (originates within OrbSynth).
+    var flanger:     AKFlanger!                     // Flanger effect processing module from AudioKit (originates within OrbSynth).
+    var distortion:  AKDecimator!                   // Distortion effect processing module from AudioKit (originates within OrbSynth).
+    var tremolo:     AKTremolo!                     // Tremolo effect processing module from AudioKit (originates within OrbSynth).
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -38,8 +39,12 @@ class Orb: SKSpriteNode {
         self.name = "defaultOrb"
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
         
+        // Set default orb light mask values.
+        self.lightingBitMask = 1
+        
         // Create SKLightNode.
         lightNode = SKLightNode()
+        lightNode.categoryBitMask = 1
         lightNode.position = .zero
         lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
         lightNode.ambientColor = .init(red: 50, green: 75, blue: 255, alpha: 1)
@@ -56,6 +61,9 @@ class Orb: SKSpriteNode {
         flanger     = self.orbSynth.flanger
         distortion  = self.orbSynth.distortion
         tremolo     = self.orbSynth.tremolo
+        
+        // Set key to default.
+        updateSynthKey(root: "C", tonality: "maj")
     }
     
     // Convenience init() function:
@@ -65,19 +73,14 @@ class Orb: SKSpriteNode {
         self.position = position
         self.size = size
         
-        // Create physics body.
-        initOrbPhysics()
-        
         // Set orb octave range based on the size of the orb:
         // 1) Subtract the orb's size away from the maxium size.
         // 2) Divide by the size range over the number of octaves.
         // 3) Round down to the nearest integer.
-        let oct = Int(floor((400 - size.height) / (320 / 6)))
+        octaveRange = Int(floor((400 - size.height) / (320 / 6)))
         
         // Set the orb's octave range.
-        orbSynth.setOctaveRange(octave: oct)
-        
-        print("[Orb.swift] Orb spawned at x: \(Int(self.position.x)), y: \(Int(self.position.y)) of size: \(Int(self.size.width)) and mass: \(Int(self.physicsBody!.mass)). Octave range: \(oct)")
+        orbSynth.setOctaveRange(octave: octaveRange)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -87,18 +90,18 @@ class Orb: SKSpriteNode {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    public func play(velocity: UInt8){
+    public func play(velocity: UInt8) {
         lightNode.falloff = 10
         orbSynth.playRandom(MIDIVelocity: velocity)
     }
     
+    public func updateSynthKey(root: String!, tonality: String!) {
+        orbSynth.setScale(scale: "\(root ?? "C")" + "\(tonality ?? "maj")")
+    }
     
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-    private func initOrbPhysics() {
-
+    public func initOrbPhysics() {
+        
         // Set sprite node's physics body and gravity properties.
-        self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.width / 2)
         self.physicsBody!.usesPreciseCollisionDetection = true
         self.physicsBody!.affectedByGravity = true
         self.physicsBody!.allowsRotation = false
@@ -107,7 +110,7 @@ class Orb: SKSpriteNode {
         
         // Calculate mass using volume of sphere equation.
         self.physicsBody!.mass = (4/3) * CGFloat.pi * pow((self.size.width / 2), 3)
-
+        
         // Set sprite node's material properties.
         self.physicsBody!.restitution = 0.8
         self.physicsBody!.linearDamping = 0.4
@@ -119,10 +122,5 @@ class Orb: SKSpriteNode {
         self.physicsBody!.collisionBitMask = 1
         self.physicsBody!.fieldBitMask = 1
         self.physicsBody!.contactTestBitMask = 1
-        
-        // Set default orb light mask values.
-        self.lightingBitMask = 1
-        self.shadowedBitMask = 0
-        self.shadowCastBitMask = 0
     }
 }

@@ -21,7 +21,7 @@ class RedOrb: Orb {
         
         self.name = "redOrb"
         self.texture = SKTexture(imageNamed: "redOrbSprite")
-        self.lightNode.lightColor = .init(red: 255, green: 75, blue: 50, alpha: 0.7)
+        self.lightNode.lightColor = .init(red: 255, green: 75, blue: 50, alpha: 0.6)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         

@@ -89,6 +89,7 @@ class TutorialScene {
         
         // Initalise the tutorial sequence.
         sequenceState = 0
+        sandboxScene.setTutorialSequenceState(to: 0)
         readyToAdvance = false
         tutorialSequence()
     }
@@ -111,29 +112,33 @@ class TutorialScene {
         // Switch-case to keep track of the tutorial sequenece, including triggering the overlay and setting the text.
         switch sequenceState! {
             
-        case 0: // Welcome screen.
-            readyToAdvance = true
-            toggleTutorialOverlay()
-            return
-        case 4, 7, 10, 17, 20, 22, 27: // Tutorial user prompts.
-            readyToAdvance = false
-            toggleTutorialOverlay()
-            return
-        case 14: // Fade in control panel icon.
-            if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
-                panelIcon.run(SKAction.fadeIn(withDuration: 1))
-            }
-        case 30: // Fade in help icon.
-            if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
-                panelIcon.run(SKAction.fadeIn(withDuration: 1))
-            }
-        case 32: // End tutorial sequence.
-            toggleTutorialOverlay()
-            sandboxScene.setTutorialActive(false)
-            return
-        default:
-            // Ignore and continue.
-            break
+            case 0: // Welcome screen.
+                readyToAdvance = true
+                toggleTutorialOverlay()
+                return
+            case 4, 7, 10, 17, 20, 22, 27: // Tutorial user prompts.
+                // Disable tutorial user interaction.
+                sandboxScene.setTutorialUserInteraction(false)
+                readyToAdvance = false
+                toggleTutorialOverlay()
+                return
+            case 14: // Fade in control panel icon.
+                if let panelIcon = sandboxParentNode.childNode(withName: "controlPanelIcon") as? SKSpriteNode {
+                    panelIcon.run(SKAction.fadeIn(withDuration: 1))
+                }
+            case 30: // Fade in help icon.
+                if let panelIcon = sandboxParentNode.childNode(withName: "helpIcon") as? SKSpriteNode {
+                    panelIcon.run(SKAction.fadeIn(withDuration: 1))
+                }
+            case 32: // End tutorial sequence.
+                toggleTutorialOverlay()
+                // Disable tutorial user interaction.
+                sandboxScene.setTutorialUserInteraction(false)
+                sandboxScene.setTutorialActive(false)
+                return
+            default:
+                // Ignore and continue.
+                break
         }
         
         // Create a mutable attributed string using the text and attributes of the existant currentInfoLabel.
@@ -149,55 +154,62 @@ class TutorialScene {
     private func waitForUser(at tutorialState: Int) {
         
         switch tutorialState {
-        case 4: // Wait for user to tilt the screen.
-            let gravity = sandboxScene.getGravity()
-            if abs(gravity.dx) >= 2.0 || abs(gravity.dy) >= 2.0 {
-                readyToAdvance = true
-            }
-        case 7: // Wait for user to add another orb to the sandbox.
-            if sandboxScene.getOrbArray().count > 1 {
-                readyToAdvance = true
-            }
-        case 10: // Wait for user to make the orbs collide.
-            if sandboxScene.hasOrbCollided() {
-                readyToAdvance = true
-            }
-        case 17: // Wait for user to activate the control panel.
-            if sandboxScene.isControlPanelActive() {
-                userGuideLabel.run(SKAction.moveTo(y: 160, duration: 0))
-                readyToAdvance = true
-            }
-        case 20: // Wait for user to add a different orb to the screen.
-            let orbs = sandboxScene.getOrbArray()
-            let orbName = orbs[orbs.count - 1].name
-            if orbName == "purpleOrb" || orbName == "redOrb" {
-                
-                // Collapse control panel is it is active.
-                if sandboxScene.isControlPanelActive() {
-                    sandboxScene.toggleControlPanel()
+            case 4: // Wait for user to tilt the screen.
+                let gravity = sandboxScene.getGravity()
+                if abs(gravity.dx) >= 2.0 || abs(gravity.dy) >= 2.0 {
+                    readyToAdvance = true
                 }
-                
-                userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
-                readyToAdvance = true
-            }
-        case 22: // Wait for user to make the orbs collide.
-            if sandboxScene.hasOrbCollided() {
-                readyToAdvance = true
-            }
-        case 27: // Wait for user to remove orbs down to 2.
-            if sandboxScene.getOrbArray().count < 3 {
-                readyToAdvance = true
-            }
-        default:
-            // Ignore and return.
-            return
+            case 7: // Wait for user to add another orb to the sandbox.
+                if sandboxScene.hasOrbBeenAdded() {
+                    readyToAdvance = true
+                }
+            case 10: // Wait for user to make the orbs collide.
+                if sandboxScene.hasOrbCollided() {
+                    readyToAdvance = true
+                }
+            case 17: // Wait for user to activate the control panel.
+                if sandboxScene.isControlPanelActive() {
+                    userGuideLabel.run(SKAction.moveTo(y: 160, duration: 0))
+                    readyToAdvance = true
+                }
+            case 20: // Wait for user to add a different orb to the screen.
+                if sandboxScene.hasOrbBeenAdded() {
+                    let orbs = sandboxScene.getOrbArray()
+                    let orbName = orbs[orbs.count - 1].name
+                    // Check that orb is other than blue.
+                    if orbName == "purpleOrb" || orbName == "redOrb" {
+                        
+                        // Collapse control panel is it is active.
+                        if sandboxScene.isControlPanelActive() {
+                            sandboxScene.toggleControlPanel()
+                        }
+                        
+                        userGuideLabel.run(SKAction.moveTo(y: -420, duration: 0))
+                        readyToAdvance = true
+                    }
+                }
+            case 22: // Wait for user to make the orbs collide.
+                if sandboxScene.hasOrbCollided() {
+                    readyToAdvance = true
+                }
+            case 27: // Wait for user to remove orbs down to 2.
+                if sandboxScene.getOrbArray().count < 3 {
+                    readyToAdvance = true
+                }
+            default:
+                // Ignore and return.
+                return
         }
         
         // If user has completed the tutorial task and the overlay is off, increase the sequence to the next state.
         if readyToAdvance && tutorialOverlay.alpha == 0.0 {
             
+            // Enable tutorial user interaction.
+            sandboxScene.setTutorialUserInteraction(true)
+            
             toggleTutorialOverlay()
             sequenceState += 1
+            sandboxScene.setTutorialSequenceState(to: sequenceState)
             tutorialSequence()
         }
     }
@@ -243,8 +255,10 @@ class TutorialScene {
                     panelIcon.run(SKAction.fadeIn(withDuration: 1))
                 }
                 
-                // End tutorial.
+                // End tutorial and disable tutorial user interaction.
                 sequenceState = 32
+                sandboxScene.setTutorialSequenceState(to: 32)
+                sandboxScene.setTutorialUserInteraction(false)
                 sandboxScene.setTutorialActive(false)
                 
                 return
@@ -254,6 +268,7 @@ class TutorialScene {
         // If the overlay is on and a task has not been set, increase the sequence to the next state.
         if readyToAdvance && tutorialOverlay.alpha == 1.0 {
             sequenceState += 1
+            sandboxScene.setTutorialSequenceState(to: sequenceState)
             tutorialSequence()
         }
     }
