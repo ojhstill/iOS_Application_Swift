@@ -21,7 +21,7 @@ class RedOrb: Orb {
         
         self.name = "redOrb"
         self.texture = SKTexture(imageNamed: "redOrbSprite")
-        self.lightNode.lightColor = .init(red: 255, green: 75, blue: 50, alpha: 0.6)
+        self.lightNode.lightColor = .init(red: 255, green: 75, blue: 50, alpha: 0.5)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         
@@ -35,9 +35,9 @@ class RedOrb: Orb {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Changes the effects of the orb's synth based on the type of orb that it collides with:
     public func changeEffects(collisionWith orbName: String!) {
         
-        // Change the effects of the orb's synth based on the type of orb that it collides with.
         switch orbName {
             case "blueOrb":
                 // Effect: SOFT CRUSHED DELAY

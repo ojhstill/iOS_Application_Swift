@@ -21,11 +21,11 @@ class PurpleOrb: Orb {
         
         self.name = "purpleOrb"
         self.texture = SKTexture(imageNamed: "purpleOrbSprite")
-        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.65)
+        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.60)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         
-        self.orbSynth.waveform = AKTable(.positiveSawtooth)
+        self.orbSynth.waveform = AKTable(.sawtooth)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -35,9 +35,9 @@ class PurpleOrb: Orb {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Changes the effects of the orb's synth based on the type of orb that it collides with:
     public func changeEffects(collisionWith orbName: String!) {
         
-        // Change the effects of the orb's synth based on the type of orb that it collides with.
         switch orbName {
             case "blueOrb":
                 // Effect: SOFT TREMOLO FLANGER

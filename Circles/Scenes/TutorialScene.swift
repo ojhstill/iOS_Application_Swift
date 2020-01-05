@@ -29,6 +29,7 @@ class TutorialScene {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Dictionary containing the tutorial text at each sequence state.
     private let tutorialText = [0 : "WELCOME TO CIRCLES!\n THE INTERACTIVE AUDIO SANDBOX BY Y3857872",
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
                                 2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDS.",
@@ -105,6 +106,7 @@ class TutorialScene {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Main tutorial sequenece:
     private func tutorialSequence() {
         
         print("[SandboxScene.swift] Tutorial state \(sequenceState!).")
@@ -151,6 +153,7 @@ class TutorialScene {
         currentInfoLabel.attributedText = nextInfoLabel
     }
     
+    // Sequence states to wait for a defined user interaction to advance the tutorial sequence:
     private func waitForUser(at tutorialState: Int) {
         
         switch tutorialState {
@@ -214,6 +217,7 @@ class TutorialScene {
         }
     }
     
+    // Toggles the tutorial overlay, triggered automatically in the tutorial sequenece:
     private func toggleTutorialOverlay() {
         
         // If the tutorial overlay is off, ...

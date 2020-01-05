@@ -13,12 +13,12 @@
         <!--GameView-->
         <scene sceneID="Khx-Yc-InU">
             <objects>
-                <viewController title="GameView" id="NXi-oP-jce" customClass="GameViewController" customModule="Circles" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="GameView" id="NXi-oP-jce" customClass="ViewController" customModule="Circles" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="o1J-ST-Wua" customClass="SKView">
                         <rect key="frame" x="0.0" y="0.0" width="768" height="1024"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PFX-zr-c85">
+                            <label hidden="YES" autoresizesSubviews="NO" opaque="NO" clearsContextBeforeDrawing="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" enabled="NO" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PFX-zr-c85">
                                 <rect key="frame" x="146" y="437" width="476" height="150"/>
                                 <attributedString key="attributedText">
                                     <fragment content="STORYBOARD NOT IN USE">

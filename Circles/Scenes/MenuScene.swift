@@ -15,7 +15,7 @@ class MenuScene: SKScene {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define menu scene varibles:
-    weak    var viewController:     GameViewController!         // Weak storage of the scene's view to communicate with controller.
+    weak    var viewController:     ViewController!             // Weak storage of the scene's view to communicate with controller.
     private var tutorialActive:     Bool!                       // Boolean to trigger the tutorial when game starts.
 
 
@@ -38,6 +38,7 @@ class MenuScene: SKScene {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PRIVATE CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Setups all the animations in the main menu:
     private func animateMenuScreen(in view: SKView) {
         
         // Get 'menuOrbSprite' SKSpriteNode from MenuScene.
@@ -82,6 +83,7 @@ class MenuScene: SKScene {
         }
     }
     
+    // Presents the main sandbox scene, triggered by tapping on the menu orb:
     private func presentSandboxScene() {
             
         // Load the SKScene from 'SandboxScene.sks'
@@ -89,7 +91,6 @@ class MenuScene: SKScene {
             
             // Assign weak storage of sandboxScene inside the viewController.
             viewController.setCurrentScene(to: sandboxScene)
-            viewController.sandboxScene = sandboxScene
             sandboxScene.viewController = self.viewController
             
             // Get 'menuOrbSprite' SKSpriteNode from MenuScene.
@@ -111,7 +112,7 @@ class MenuScene: SKScene {
             
             // Create SKTransition to crossfade between scenes.
             let transition = SKTransition.crossFade(withDuration: 3)
-            transition.pausesOutgoingScene = false
+            transition.pausesOutgoingScene = true
             
             // Present scene to the SKView.
             self.view!.presentScene(sandboxScene, transition: transition)

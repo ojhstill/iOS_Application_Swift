@@ -90,19 +90,22 @@ class Orb: SKSpriteNode {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    // Triggers the orb synth to play with a given velocity:
     public func play(velocity: UInt8) {
         lightNode.falloff = 10
         orbSynth.playRandom(MIDIVelocity: velocity)
     }
     
+    // Updates the synths key from a given root and tonality:
     public func updateSynthKey(root: String!, tonality: String!) {
         orbSynth.setScale(scale: "\(root ?? "C")" + "\(tonality ?? "maj")")
     }
     
+    // Sets up the orbs physics properties:
     public func initOrbPhysics() {
         
         // Set sprite node's physics body and gravity properties.
-        self.physicsBody!.usesPreciseCollisionDetection = true
+        self.physicsBody!.usesPreciseCollisionDetection = false
         self.physicsBody!.affectedByGravity = true
         self.physicsBody!.allowsRotation = false
         self.physicsBody!.isDynamic = true

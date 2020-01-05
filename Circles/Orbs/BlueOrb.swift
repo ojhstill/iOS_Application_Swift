@@ -12,8 +12,8 @@ import SpriteKit
 import AudioKit
 
 class BlueOrb: Orb {
-
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Designated init() function:
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
@@ -21,7 +21,7 @@ class BlueOrb: Orb {
         
         self.name = "blueOrb"
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
-        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.9)
+        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.8)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         
@@ -31,41 +31,41 @@ class BlueOrb: Orb {
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
     
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
+    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    // Changes the effects of the orb's synth based on the type of orb that it collides with:
     public func changeEffects(collisionWith orbName: String!) {
         
-        // Change the effects of the orb's synth based on the type of orb that it collides with.
         switch orbName {
-            case "blueOrb":
-                // Effect: SOFT REVERB
-                reverb.dryWetMix    = 1.0
-                delay.dryWetMix     = 0.2
-                flanger.depth       = 0.0
-                distortion.mix      = 0.0
-                tremolo.depth       = 0.1
+        case "blueOrb":
+            // Effect: SOFT REVERB
+            reverb.dryWetMix    = 1.0
+            delay.dryWetMix     = 0.2
+            flanger.depth       = 0.0
+            distortion.mix      = 0.0
+            tremolo.depth       = 0.1
             
-            case "purpleOrb":
-                // Effect: SOFT TREMOLO REVERB
-                reverb.dryWetMix    = 0.3
-                delay.dryWetMix     = 0.0
-                flanger.depth       = 0.6
-                distortion.mix      = 0.0
-                tremolo.depth       = 1.0
+        case "purpleOrb":
+            // Effect: SOFT TREMOLO REVERB
+            reverb.dryWetMix    = 0.3
+            delay.dryWetMix     = 0.0
+            flanger.depth       = 0.6
+            distortion.mix      = 0.0
+            tremolo.depth       = 1.0
             
-            case "redOrb":
-                // Effect: SOFT CRUSHED REVERB
-                reverb.dryWetMix    = 0.6
-                delay.dryWetMix     = 0.2
-                flanger.depth       = 0.0
-                distortion.mix      = 0.2
-                tremolo.depth       = 0.1
+        case "redOrb":
+            // Effect: SOFT CRUSHED REVERB
+            reverb.dryWetMix    = 0.6
+            delay.dryWetMix     = 0.2
+            flanger.depth       = 0.0
+            distortion.mix      = 0.1
+            tremolo.depth       = 0.1
             
-            default:
-                // Ignore and return.
-                return
+        default:
+            // Ignore and return.
+            return
         }
     }
 }

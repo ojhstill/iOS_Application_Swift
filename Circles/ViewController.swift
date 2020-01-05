@@ -1,5 +1,5 @@
 //
-//  GameViewController.swift
+//  ViewController.swift
 //  Circles
 //
 //  Created by Y3857872 on 07/11/2019.
@@ -9,14 +9,12 @@
 // Import Core Libraries
 import SpriteKit
 
-class GameViewController: UIViewController {
+class ViewController: UIViewController {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define controller varibles:
     private var currentScene:   SKScene!                    // SKScene to store the currently active displayed scene.
-    weak   var menuScene:       MenuScene!                  // Weak storage of the menu scene to communicate with UIKit elements.
-    weak   var sandboxScene:    SandboxScene!               // Weak storage of the sandbox scene to communicate with UIKit elements.
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -27,17 +25,17 @@ class GameViewController: UIViewController {
         if let view = self.view as! SKView? {
                         
             // Load the SKScene from 'MenuScene.sks'
-            if let scene = SKScene(fileNamed: "MenuScene") {
+            if let mainMenu = SKScene(fileNamed: "MenuScene") {
                 
                 // Present the application main menu.
-                view.presentScene(scene)
+                view.presentScene(mainMenu)
                 
                 // Store the currently presented scene.
-                currentScene = scene
+                currentScene = mainMenu
                 
                 // Assign weak storage of menuScene and viewController.
-                menuScene = scene as? MenuScene
-                menuScene.viewController = self
+                let scene = mainMenu as? MenuScene
+                scene!.viewController = self
             }
             
             // DEBUG TOOLS:
@@ -70,6 +68,7 @@ class GameViewController: UIViewController {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     public func setCurrentScene(to scene: SKScene) {
+        // Store the currently presented scene in a local varible.
         currentScene = scene
     }
 }
