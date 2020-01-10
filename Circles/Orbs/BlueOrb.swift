@@ -13,7 +13,7 @@ import AudioKit
 
 class BlueOrb: Orb {
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Designated init() function:
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
@@ -33,7 +33,7 @@ class BlueOrb: Orb {
     }
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Changes the effects of the orb's synth based on the type of orb that it collides with:
     public func changeEffects(collisionWith orbName: String!) {

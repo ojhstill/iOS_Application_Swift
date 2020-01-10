@@ -67,6 +67,7 @@ class ViewController: UIViewController {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+    // Stores the currently displayed SKScene in a local varible:
     public func setCurrentScene(to scene: SKScene) {
         // Store the currently presented scene in a local varible.
         currentScene = scene

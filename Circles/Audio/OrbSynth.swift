@@ -12,7 +12,7 @@ import AudioKit
 
 class OrbSynth: AKFMOscillatorBank {
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define orb synth variables:
     private var MIDINoteArray:  [Int]!                  // Array containing the MIDI note values to play, defined by the chosen key.
@@ -26,7 +26,7 @@ class OrbSynth: AKFMOscillatorBank {
     var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // MIDI note value dictionary from C0 to B0.
     let MIDINoteValues = ["C": 12, "Db": 13, "D": 14, "Eb": 15, "E": 16, "F": 17, "Gb": 18, "G": 19, "Ab": 20, "A": 21, "Bb": 22, "B": 23]
@@ -46,7 +46,7 @@ class OrbSynth: AKFMOscillatorBank {
                   "Bmaj":  ["Ab", "B" , "Db", "Eb", "Gb"], "Abmin": ["Ab", "B" , "Db", "Eb", "Gb"]]
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Designated init() function:
     public override init(waveform: AKTable, carrierMultiplier: Double = 1, modulatingMultiplier: Double = 1, modulationIndex: Double = 1, attackDuration: Double = 0.1, decayDuration: Double = 0.1, sustainLevel: Double = 1, releaseDuration: Double = 0.1, pitchBend: Double = 0, vibratoDepth: Double = 0, vibratoRate: Double = 0) {
@@ -102,7 +102,7 @@ class OrbSynth: AKFMOscillatorBank {
     }
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Connect the synth's output to the given AKInput node:
     public func connectOrbSynthOutput(to node: AKInput) {
@@ -115,7 +115,7 @@ class OrbSynth: AKFMOscillatorBank {
     }
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * INTERNAL CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * INTERNAL CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Set the selection of notes to play defined within the scales dictionary:
     func setScale(scale: String) {
@@ -163,7 +163,7 @@ class OrbSynth: AKFMOscillatorBank {
     }
     
     
-    /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Set the octave range for the orb to play in, defined by the size of the orb:
     public func setOctaveRange(octave: Int) {

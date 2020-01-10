@@ -21,6 +21,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     weak    var viewController:             ViewController!                     // Weak storage of the scene's view to communicate with controller.
     private var motionManager:              CMMotionManager!                    // Manages CoreMotion library and accelerometer data.
     private var audioManager:               AudioManager!                       // Manages audio output using AudioKit.
+    private var frameCount:                 Int!                                // Current number of frames that have passed since last reset.
     
     // Define sandbox scene varibles:
     private var sandboxParentNode:          SKNode!                             // Main parent that holds all nodes associated with the sandbox scene.
@@ -68,6 +69,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         
         // Set the physics body to the edge of the screen.
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        
+        // Reset frame count.
+        frameCount = 0
         
         // Setup audio manager (and AudioKit).
         audioManager = AudioManager()
@@ -135,6 +139,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         keyPicker.dataSource = self
         keyPicker.backgroundColor = .clear
         viewController.view?.addSubview(keyPicker)
+        
+        // Set key defaults.
+        keyRoot = "C"
+        keyTonality = "maj"
         
         // Add pinch gesture to view to trigger 'pinchRecognised()' function.
         let pinch = UIPinchGestureRecognizer(target: scene, action: #selector(pinchRecognised(pinch:)))
@@ -275,8 +283,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 // Give the orb a unique lighting bit mask to ensure light sources do not constructively interfere.
                 newOrb.lightingBitMask = UInt32(pow(2, Double(orbArray!.count)))
                 newOrb.lightNode.categoryBitMask = UInt32(pow(2, Double(orbArray!.count)))
-                
-                print("\(UInt32(powf(2, Float(orbArray!.count))))")
             }
             else {
                 // ... (else cancel the orb).
@@ -428,26 +434,39 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             tutorialScene.overlayTouched(touch, with: event)
         }
         else {
+            // Take the node at the top of the screen.
             let location = touch.location(in: self)
             let frontTouchedNode = atPoint(location).name
             
+            // Dependant on the name of the touched node, perform a program action.
             switch frontTouchedNode {
+                
+                // Control panel button.
                 case "controlPanelIcon":
                     toggleControlPanel()
+                
+                // Orb selection buttons.
                 case "controlPanelBlueOrb":
                     selectOrb(colour: "blue")
                 case "controlPanelPurpleOrb":
                     selectOrb(colour: "purple")
                 case "controlPanelRedOrb":
                     selectOrb(colour: "red")
+                
+                // Black hole toggle label.
                 case "controlPanelBlackHoleLabel":
                     toggleBlackHole()
+                
+                // Main menu label.
                 case "controlPanelMenuLabel":
                     presentMenuScene()
+                
+                // Help overlay button.
                 case "helpIcon":
                     toggleHelpOverlay()
+                
+                // Not registered - ignore and break.
                 default:
-                    // Ignore and break.
                     break
             }
         }
@@ -455,6 +474,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     
     // Function is called after each frame update:
     override func update(_ currentTime: TimeInterval) {
+        
         if tutorialIsActive {
             tutorialScene.update()
         }
@@ -470,6 +490,24 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 orb.lightNode.falloff = 12
             }
         }
+        
+        // Every 500 frames, ...
+        if frameCount >= 500 {
+            
+            // ... update the frame in each orb.
+            updateKey()
+            
+            // * Note from Developer *
+            // - This feature been implemented to help with an AudioKit bug where the orb synths will stop playing after a number of collisions.
+            // - It was found that reseting the synth note array helped, but did not fix the issue.
+            // - This bug is to be removed in a future update patch.
+            
+            // Reset frame count.
+            frameCount = 0
+        }
+        
+        // Increment frame count.
+        frameCount += 1
     }
     
     
@@ -586,15 +624,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         for orb in orbArray {
             orb.updateSynthKey(root: keyRoot, tonality: keyTonality)
         }
-        
-        print("[SandboxScene.swift] Scale set to \(keyRoot ?? "ERROR")\(keyTonality ?? "ERROR")")
     }
     
     private func presentMenuScene() {
-        
-        if panelActive {
-            toggleControlPanel()
-        }
         
         // Load the SKScene from 'MenuScene.sks'
         if let menuScene = MenuScene(fileNamed: "MenuScene") {
@@ -641,7 +673,10 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         keyRoot = pickerData[0][pickerView.selectedRow(inComponent: 0)]
         keyTonality = pickerData[1][pickerView.selectedRow(inComponent: 1)]
+        
         updateKey()
+        
+        print("[SandboxScene.swift] Scale set to \(keyRoot ?? "ERROR")\(keyTonality ?? " ERROR")")
     }
     
     
