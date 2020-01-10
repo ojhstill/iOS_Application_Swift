@@ -1,0 +1,111 @@
+*** Default Language ***
+
+English (UK)
+
+
+*** Application Name ***
+
+Circles
+
+
+*** Application Description ***
+
+Circles is a unique ambient soundscape creator right at the touch of your fingertips.
+
+Let your iPad become a musical sandbox to help you relax and unwind, with mediative textures, effects, and tones to bring calm, wellness and balance to your day.
+
+Learn how to create your own unique audio environments with various touch gestures and physics control to make musical orbs collide and ignite with sounds.
+
+AMBIENT SOUNDSCAPES:
+
+It is widely known that ambient music and natural soundscapes can help in providing order and security to what otherwise would be a stressful mindset. Through extensive studies, music is seen have a beneficial effect on our physiological functions, forming a new subset for therapy and mental health. Positive effects include slowing the pulse and heart rate, lowering blood pressure, and decreasing the levels of stress hormones. This app is designed to take no more than 5 mins from your day to help you relax and become more mindful.
+
+This app is also suitable for younger children to learn about music and sounds from its easy to use gestures and minimal user interface. Audiences can learn about different types of waveforms and effects and learn to recognise the auditory properties of each.
+
+ORBS:
+
+There are three different types of 'orbs' to add in the sandbox - blue, purple, and red. Each orb has its own musical sounds and effects.
+
+Blue Orb (Sine Wave) 		- Soft, pure tones with reverent effects.
+Purple Orb (Sawtooth Wave) 	- Bright, clear tones with tremolo effects.
+Red Orb (Triangle Wave)		- Warm, saturated tones with delay effects.
+
+In addition to the respective effects, other unique effects may appear when different orb types collide with one another. Some examples are:
+
+Blue Orb + Red Orb -> DISTORTED REVERB
+Purple Orb + Red Orb -> TREMOLO FLANGER
+
+Try to find all the effect combos to take your soundscapes to the next level!
+
+OTHER FEATURES:
+
+The control panel contains all of the changeable settings for the sandbox including:
+	- Orb type selection.
+	- Volume control.
+	- Pentatonic key control.
+	- 'Black Hole' mode.
+
+Circles includes a step-by-step inbuilt tutorial that can be toggled in the main menu to help guide you through all the controls needed to get you going. In addition, a quick help overlay can be viewed by tapping the '?' symbol in the top right corner.
+
+
+*** SKU Number ***
+
+CRCL001
+
+
+*** Bundle ID ***
+
+uk.co.CrclAppStudios.Circles
+
+
+*** Version Number ***
+
+v1.0
+
+
+*** Copyright ***
+
+© 2020 Crcl App Studios (Y3857872)
+
+
+*** Primary / Secondary Category ***
+
+Games / Music
+
+
+*** Subcategories ***
+
+- Mediation
+- Sandbox
+- Health & Fitness
+- Education
+
+
+*** Keywords ***
+
+Interactive, Sandbox, Mediation, Mind, Mental, Health, Relax, Calm, Music, Audio, Ambient, Soundscape, Environment, Education, Gravity, Shapes, Orbs, Synths, Physics,
+
+
+*** App Rating ***
+
+4+
+
+
+*** Availability Date ***
+
+12:00GTM 16th January 2020
+
+
+*** Price Tier ***
+
+Free
+
+
+*** Territories ***
+
+All
+
+
+*** Extras ***
+
+N/A
