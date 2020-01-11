@@ -19,12 +19,14 @@ class BlueOrb: Orb {
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
         
+        // Setup blue orb properties.
         self.name = "blueOrb"
         self.texture = SKTexture(imageNamed: "blueOrbSprite")
         self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.8)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         
+        // Blue orb -> Sine wave.
         self.orbSynth.waveform = AKTable(.sine)
     }
     
@@ -39,33 +41,33 @@ class BlueOrb: Orb {
     public func changeEffects(collisionWith orbName: String!) {
         
         switch orbName {
-        case "blueOrb":
-            // Effect: SOFT REVERB
-            reverb.dryWetMix    = 1.0
-            delay.dryWetMix     = 0.2
-            flanger.depth       = 0.0
-            distortion.mix      = 0.0
-            tremolo.depth       = 0.1
+            case "blueOrb":
+                // Effect: SOFT REVERB
+                setTargetDelay(target: 0.2)
+                setTargetReverb(target: 1.0)
+                setTargetFlanger(target: 0.0)
+                setTargetDistortion(target: 0.0)
+                setTargetTremolo(target: 0.1)
             
-        case "purpleOrb":
-            // Effect: SOFT TREMOLO REVERB
-            reverb.dryWetMix    = 0.3
-            delay.dryWetMix     = 0.0
-            flanger.depth       = 0.6
-            distortion.mix      = 0.0
-            tremolo.depth       = 1.0
+            case "purpleOrb":
+                // Effect: SOFT TREMOLO REVERB
+                setTargetDelay(target: 0.0)
+                setTargetReverb(target: 0.3)
+                setTargetFlanger(target: 0.6)
+                setTargetDistortion(target: 0.0)
+                setTargetTremolo(target: 1.0)
             
-        case "redOrb":
-            // Effect: SOFT CRUSHED REVERB
-            reverb.dryWetMix    = 0.6
-            delay.dryWetMix     = 0.2
-            flanger.depth       = 0.0
-            distortion.mix      = 0.1
-            tremolo.depth       = 0.1
+            case "redOrb":
+                // Effect: SOFT CRUSHED REVERB
+                setTargetDelay(target: 0.2)
+                setTargetReverb(target: 0.6)
+                setTargetFlanger(target: 0.0)
+                setTargetDistortion(target: 0.1)
+                setTargetTremolo(target: 0.1)
             
-        default:
-            // Ignore and return.
-            return
+            default:
+                // Ignore and return.
+                return
         }
     }
 }

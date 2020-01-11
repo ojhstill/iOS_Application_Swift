@@ -489,6 +489,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             else {
                 orb.lightNode.falloff = 12
             }
+            
+            orb.updateOrbEffects()
         }
         
         // Every 500 frames, ...

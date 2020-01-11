@@ -19,12 +19,14 @@ class PurpleOrb: Orb {
     public override init(texture: SKTexture?, color: UIColor, size: CGSize) {
         super.init(texture: texture, color: color, size: size)
         
+        // Setup purple orb properties.
         self.name = "purpleOrb"
         self.texture = SKTexture(imageNamed: "purpleOrbSprite")
-        self.lightNode.lightColor = .init(red: 50, green: 75, blue: 255, alpha: 0.60)
+        self.lightNode.lightColor = .init(red: 100, green: 60, blue: 120, alpha: 0.40)
         self.lightNode.ambientColor = .white
         self.lightNode.falloff = 12
         
+        // Purple orb -> Sawtooth wave.
         self.orbSynth.waveform = AKTable(.sawtooth)
     }
     
@@ -41,32 +43,31 @@ class PurpleOrb: Orb {
         switch orbName {
             case "blueOrb":
                 // Effect: SOFT TREMOLO FLANGER
-                reverb.dryWetMix    = 0.6
-                delay.dryWetMix     = 0.0
-                flanger.depth       = 0.7
-                distortion.mix      = 0.0
-                tremolo.depth       = 0.6
-                tremolo.frequency   = 2.0
+                setTargetDelay(target: 0.0)
+                setTargetReverb(target: 0.6)
+                setTargetFlanger(target: 0.7)
+                setTargetDistortion(target: 0.0)
+                setTargetTremolo(target: 0.6)
+                setTremoloFreq(freq: 2.0)
                 
             case "purpleOrb":
                 // Effect: FAST TREMOLO
-                reverb.dryWetMix    = 0.0
-                delay.dryWetMix     = 0.0
-                flanger.depth       = 0.0
-                distortion.mix      = 0.0
-                tremolo.depth       = 1.0
-            
-                tremolo.frequency   = 6.0
+                setTargetDelay(target: 0.3)
+                setTargetReverb(target: 0.0)
+                setTargetFlanger(target: 0.0)
+                setTargetDistortion(target: 0.0)
+                setTargetTremolo(target: 1.0)
+                setTremoloFreq(freq: 6.0)
                 
             case "redOrb":
                 // Effect: SOFT TREMOLO DELAY
-                reverb.dryWetMix    = 0.2
-                delay.dryWetMix     = 0.4
-                flanger.depth       = 0.0
-                distortion.mix      = 0.1
-                tremolo.depth       = 0.6
-                tremolo.frequency   = 2.0
-                
+                setTargetDelay(target: 0.4)
+                setTargetReverb(target: 0.2)
+                setTargetFlanger(target: 0.0)
+                setTargetDistortion(target: 0.1)
+                setTargetTremolo(target: 0.6)
+                setTremoloFreq(freq: 2.0)
+            
             default:
                 // Ignore and return.
                 return
