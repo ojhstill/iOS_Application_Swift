@@ -19,11 +19,11 @@ class OrbSynth: AKFMOscillatorBank {
     private var octaveRange:    Int!                    // The octave range multiplier defined by the respective size of the orb.
     
     // Define AudioKit effects:
-    var reverb:                 AKReverb!               // Reverb effect processing module from AudioKit.
-    var delay:                  AKDelay!                // Delay effect processing module from AudioKit.
-    var flanger:                AKFlanger!              // Flanger effect processing module from AudioKit.
-    var distortion:             AKDecimator!            // Distortion effect processing module from AudioKit.
-    var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
+    public var reverb:                 AKReverb!               // Reverb effect processing module from AudioKit.
+    public var delay:                  AKDelay!                // Delay effect processing module from AudioKit.
+    public var flanger:                AKFlanger!              // Flanger effect processing module from AudioKit.
+    public var distortion:             AKDecimator!            // Distortion effect processing module from AudioKit.
+    public var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
     
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -70,10 +70,11 @@ class OrbSynth: AKFMOscillatorBank {
         reverb.loadFactoryPreset(.largeHall)
         
         flanger = AKFlanger()
-        flanger.depth = 0.0
+        flanger.dryWetMix = 0.0
+        flanger.depth = 1.0
         flanger.frequency = 0.3
         flanger.feedback = 0.6
-        
+
         distortion = AKDecimator()
         distortion.mix = 0.0
         distortion.decimation = 0.08

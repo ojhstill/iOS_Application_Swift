@@ -17,16 +17,22 @@ class Orb: SKSpriteNode {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
     // Define orb varibles:
-    public var orbSynth:    OrbSynth!               // The main audio source for sound generation.
-    public var lightNode:   SKLightNode!            // Node containing the dynamic light source in the centre of the orb.
-    public var octaveRange: Int!                    // Octave range that the orb's synth is limited to, dependent on the orb's size.
+    public var orbSynth:            OrbSynth!               // The main audio source for sound generation.
+    public var lightNode:           SKLightNode!            // Node containing the dynamic light source in the centre of the orb.
+    public var octaveRange:         Int!                    // Octave range that the orb's synth is limited to, dependent on the orb's size.
+    
+    private var targetDelay:        Double!                 // Target delay dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
+    private var targetReverb:       Double!                 // Target reverb dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
+    private var targetFlanger:      Double!                 // Target flanger dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
+    private var targetDistortion:   Double!                 // Target distortion dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
+    private var targetTremolo:      Double!                 // Target tremolo dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
     
     // Define AudioKit effects:
-    var reverb:      AKReverb!                      // Reverb effect processing module from AudioKit (originates within OrbSynth).
-    var delay:       AKDelay!                       // Delay effect processing module from AudioKit (originates within OrbSynth).
-    var flanger:     AKFlanger!                     // Flanger effect processing module from AudioKit (originates within OrbSynth).
-    var distortion:  AKDecimator!                   // Distortion effect processing module from AudioKit (originates within OrbSynth).
-    var tremolo:     AKTremolo!                     // Tremolo effect processing module from AudioKit (originates within OrbSynth).
+    private var reverb:             AKReverb!               // Reverb effect processing module from AudioKit (originates within OrbSynth).
+    private var delay:              AKDelay!                // Delay effect processing module from AudioKit (originates within OrbSynth).
+    private var flanger:            AKFlanger!              // Flanger effect processing module from AudioKit (originates within OrbSynth).
+    private var distortion:         AKDecimator!            // Distortion effect processing module from AudioKit (originates within OrbSynth).
+    private var tremolo:            AKTremolo!              // Tremolo effect processing module from AudioKit (originates within OrbSynth).
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * INIT() * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -56,11 +62,17 @@ class Orb: SKSpriteNode {
         orbSynth = OrbSynth()
         
         // Access orb synth effect varibles.
-        reverb      = self.orbSynth.reverb
         delay       = self.orbSynth.delay
+        reverb      = self.orbSynth.reverb
         flanger     = self.orbSynth.flanger
         distortion  = self.orbSynth.distortion
         tremolo     = self.orbSynth.tremolo
+        
+        targetDelay = 0
+        targetReverb = 0
+        targetFlanger = 0
+        targetDistortion = 0
+        targetTremolo = 0
         
         // Set key to default.
         updateSynthKey(root: "C", tonality: "maj")
@@ -90,17 +102,6 @@ class Orb: SKSpriteNode {
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
-    // Triggers the orb synth to play with a given velocity:
-    public func play(velocity: UInt8) {
-        lightNode.falloff = 10
-        orbSynth.playRandom(MIDIVelocity: velocity)
-    }
-    
-    // Updates the synths key from a given root and tonality:
-    public func updateSynthKey(root: String!, tonality: String!) {
-        orbSynth.setScale(scale: "\(root ?? "C")" + "\(tonality ?? "maj")")
-    }
-    
     // Sets up the orbs physics properties:
     public func initOrbPhysics() {
         
@@ -125,5 +126,87 @@ class Orb: SKSpriteNode {
         self.physicsBody!.collisionBitMask = 1
         self.physicsBody!.fieldBitMask = 1
         self.physicsBody!.contactTestBitMask = 1
+    }
+    
+    // Updates the synths key from a given root and tonality:
+    public func updateSynthKey(root: String!, tonality: String!) {
+        orbSynth.setScale(scale: "\(root ?? "C")" + "\(tonality ?? "maj")")
+    }
+    
+    // Triggers the orb synth to play with a given velocity:
+    public func play(velocity: UInt8) {
+        lightNode.falloff = 10
+        orbSynth.playRandom(MIDIVelocity: velocity)
+    }
+
+    // Grandually changes each effect dryness from the current value to the target value:
+    public func updateOrbEffects() {
+        
+        // Adjust delay dry/wet.
+        if delay.dryWetMix < targetDelay {
+            delay.dryWetMix += 0.02
+        }
+        else if delay.dryWetMix > targetDelay {
+            delay.dryWetMix -= 0.02
+        }
+        
+        // Adjust reverb dry/wet.
+        if reverb.dryWetMix < targetReverb {
+            reverb.dryWetMix += 0.02
+        }
+        else if reverb.dryWetMix > targetReverb {
+            reverb.dryWetMix -= 0.02
+        }
+        
+        // Adjust flanger dry/wet.
+        if flanger.dryWetMix < targetFlanger {
+            flanger.dryWetMix += 0.02
+        }
+        else if flanger.dryWetMix > targetFlanger {
+            flanger.dryWetMix -= 0.02
+        }
+        
+        // Adjust distortion mix.
+        if distortion.mix < targetDistortion {
+            distortion.mix += 0.02
+        }
+        else if distortion.mix > targetDistortion {
+            distortion.mix -= 0.02
+        }
+        
+        // Adjust tremolo depth.
+        if tremolo.depth < targetTremolo {
+            tremolo.depth += 0.02
+        }
+        else if tremolo.depth > targetTremolo {
+            tremolo.depth -= 0.02
+        }
+    }
+    
+    
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * SETTERS / GETTERS * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+    
+    public func setTargetDelay(target: Double) {
+        targetDelay = target
+    }
+    
+    public func setTargetReverb(target: Double) {
+        targetReverb = target
+    }
+    
+    public func setTargetFlanger(target: Double) {
+        targetFlanger = target
+    }
+    
+    public func setTargetDistortion(target: Double) {
+        targetDistortion = target
+    }
+    
+    public func setTargetTremolo(target: Double) {
+        targetTremolo = target
+    }
+    
+    public func setTremoloFreq(freq: Double) {
+        tremolo.frequency = freq
     }
 }
