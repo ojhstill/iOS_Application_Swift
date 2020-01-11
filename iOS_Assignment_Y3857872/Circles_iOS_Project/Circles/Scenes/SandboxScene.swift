@@ -3,7 +3,7 @@
 //  Circles
 //
 //  Created by Y3857872 on 07/11/2019.
-//  Copyright © 2019 Y3857872. All rights reserved.
+//  Copyright © 2020 Crcl App Studios (Y3857872). All rights reserved.
 //
 
 // Import Core Libraries
@@ -295,9 +295,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         if pinch.state == .changed {
             newOrb.position = orbProperties.pos
             newOrb.size = orbProperties.size
-            newOrb.physicsBody = SKPhysicsBody(circleOfRadius: orbProperties.size.width / 2)
-            // Disbale gravity effects temporarily by assigning an arbitrary categorybitmask temporarily.
-            newOrb.physicsBody?.categoryBitMask = 16
         }
         
         if pinch.state == .ended {
@@ -308,7 +305,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 
                 orbAdded = true
                 
-                print("[SandboxScene.swift] Orb spawned at (x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y))) of size: \(Int(newOrb.size.width)) and octave range: \(newOrb.octaveRange!).")
+                print("[SandboxScene.swift] Orb spawned at (x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y))) of size: \(Int(newOrb.size.width)).")
             }
             else {
                 removeOrb(orb: newOrb, index: orbArray.count - 1)

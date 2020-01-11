@@ -3,7 +3,7 @@
 //  Circles
 //
 //  Created by Y3857872 on 10/10/2019.
-//  Copyright © 2019 Y3857872. All rights reserved.
+//  Copyright © 2020 Crcl App Studios (Y3857872). All rights reserved.
 //
 
 
@@ -19,7 +19,6 @@ class Orb: SKSpriteNode {
     // Define orb varibles:
     public var orbSynth:            OrbSynth!               // The main audio source for sound generation.
     public var lightNode:           SKLightNode!            // Node containing the dynamic light source in the centre of the orb.
-    public var octaveRange:         Int!                    // Octave range that the orb's synth is limited to, dependent on the orb's size.
     
     private var targetDelay:        Double!                 // Target delay dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
     private var targetReverb:       Double!                 // Target reverb dry/wet value for reverb module to adjust to in 'updateOrbEffects' function.
@@ -84,15 +83,6 @@ class Orb: SKSpriteNode {
         self.init()
         self.position = position
         self.size = size
-        
-        // Set orb octave range based on the size of the orb:
-        // 1) Subtract the orb's size away from the maxium size.
-        // 2) Divide by the size range over the number of octaves.
-        // 3) Round down to the nearest integer.
-        octaveRange = Int(floor((400 - size.height) / (320 / 6)))
-        
-        // Set the orb's octave range.
-        orbSynth.setOctaveRange(octave: octaveRange)
     }
     
     required public init?(coder aDecoder: NSCoder) {
@@ -104,6 +94,8 @@ class Orb: SKSpriteNode {
     
     // Sets up the orbs physics properties:
     public func initOrbPhysics() {
+        
+        self.physicsBody = SKPhysicsBody(circleOfRadius: self.size.width / 2)
         
         // Set sprite node's physics body and gravity properties.
         self.physicsBody!.usesPreciseCollisionDetection = false
@@ -126,6 +118,15 @@ class Orb: SKSpriteNode {
         self.physicsBody!.collisionBitMask = 1
         self.physicsBody!.fieldBitMask = 1
         self.physicsBody!.contactTestBitMask = 1
+        
+        // Set orb octave range based on the size of the orb:
+        // 1) Subtract the orb's size away from the maxium size.
+        // 2) Divide by the size range over the number of octaves.
+        // 3) Round down to the nearest integer.
+        let octaveRange = Int(floor((400 - size.height) / (320 / 6)))
+        
+        // Set the orb's octave range.
+        self.orbSynth.setOctaveRange(octave: octaveRange)
     }
     
     // Updates the synths key from a given root and tonality:
