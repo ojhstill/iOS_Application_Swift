@@ -3,7 +3,7 @@
 //  Circles
 //
 //  Created by Y3857872 on 14/10/2019.
-//  Copyright © 2019 Y3857872. All rights reserved.
+//  Copyright © 2020 Crcl App Studios (Y3857872). All rights reserved.
 //
 
 // Import Core Libraries

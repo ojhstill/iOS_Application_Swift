@@ -3,7 +3,7 @@
 //  Circles
 //
 //  Created by Y3857872 on 23/10/2019.
-//  Copyright © 2019 Y3857872. All rights reserved.
+//  Copyright © 2020 Crcl App Studios (Y3857872). All rights reserved.
 //
 
 // Import Core Libraries
@@ -15,15 +15,15 @@ class OrbSynth: AKFMOscillatorBank {
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS VARIABLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
     
     // Define orb synth variables:
-    private var MIDINoteArray:  [Int]!                  // Array containing the MIDI note values to play, defined by the chosen key.
-    private var octaveRange:    Int!                    // The octave range multiplier defined by the respective size of the orb.
+    private var MIDINoteArray:          [Int]!                  // Array containing the MIDI note values to play, defined by the chosen key.
+    private var octaveRange:            Int!                    // The octave range multiplier defined by the respective size of the orb.
     
     // Define AudioKit effects:
-    public var reverb:                 AKReverb!               // Reverb effect processing module from AudioKit.
-    public var delay:                  AKDelay!                // Delay effect processing module from AudioKit.
-    public var flanger:                AKFlanger!              // Flanger effect processing module from AudioKit.
-    public var distortion:             AKDecimator!            // Distortion effect processing module from AudioKit.
-    public var tremolo:                AKTremolo!              // Tremolo effect processing module from AudioKit.
+    public var reverb:                 AKReverb!                // Reverb effect processing module from AudioKit.
+    public var delay:                  AKDelay!                 // Delay effect processing module from AudioKit.
+    public var flanger:                AKFlanger!               // Flanger effect processing module from AudioKit.
+    public var distortion:             AKDecimator!             // Distortion effect processing module from AudioKit.
+    public var tremolo:                AKTremolo!               // Tremolo effect processing module from AudioKit.
     
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * CLASS CONSTANTS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

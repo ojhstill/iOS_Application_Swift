@@ -3,7 +3,7 @@
 //  Circles
 //
 //  Created by Y3857872 on 09/11/2019.
-//  Copyright © 2019 Y3857872. All rights reserved.
+//  Copyright © 2020 Crcl App Studios (Y3857872). All rights reserved.
 //
 
 // Import Core Libraries
@@ -159,7 +159,7 @@ class TutorialScene {
         switch tutorialState {
             case 4: // Wait for user to tilt the screen.
                 let gravity = sandboxScene.getGravity()
-                if abs(gravity.dx) >= 2.0 || abs(gravity.dy) >= 2.0 {
+                if abs(gravity.dx) >= 1.0 || abs(gravity.dy) >= 1.0 {
                     readyToAdvance = true
                 }
             case 7: // Wait for user to add another orb to the sandbox.
