@@ -12,21 +12,21 @@ Circles
 
 Circles is a unique ambient soundscape creator right at the touch of your fingertips.
 
-Let your iPad become a musical sandbox to help you relax and unwind, with mediative textures, effects, and tones to bring calm, wellness and balance to your day.
+Let your iPad become a musical sandbox to help you relax and unwind. With mediative textures, effects, and tones, Circles aims to bring calm, wellness and balance to your day.
 
-Learn how to create your own unique audio environments with various touch gestures and physics control to make musical orbs collide and ignite with sounds.
+Learn how to create your own unique audio environments with various touch gestures and controls to make musical orbs ignite with sounds.
 
 AMBIENT SOUNDSCAPES:
 
-It is widely known that ambient music and natural soundscapes can help in providing order and security to what otherwise would be a stressful mindset. Through extensive studies, music is seen have a beneficial effect on our physiological functions, forming a new subset for therapy and mental health. Positive effects include slowing the pulse and heart rate, lowering blood pressure, and decreasing the levels of stress hormones. This app is designed to take no more than 5 mins from your day to help you relax and become more mindful.
+It is widely known that ambient music and natural soundscapes can help in providing balance to what otherwise would be a stressful mindset. Through extensive studies, music is seen have a beneficial effect on our physiological mindsets, forming a new subset for therapy and mental health. Positive effects include slowing the pulse and heart rate, lowering blood pressure, and decreasing the levels of stress hormones. This app is designed to take no more than 5 mins from your day to help you relax and become more mindful.
 
-This app is also suitable for younger children to learn about music and sounds from its easy to use gestures and minimal user interface. Audiences can learn about different types of waveforms and effects and learn to recognise the auditory properties of each.
+This app is also suitable for younger children to learn about music and audio from its easy to use gestures and minimal user interface. Young audiences can learn about different types of waveforms and effects and learn to recognise the auditory properties of each.
 
 ORBS:
 
-There are three different types of 'orbs' to add in the sandbox - blue, purple, and red. Each orb has its own musical sounds and effects.
+There are three different types of 'orbs' to add in the sandbox - blue, purple, and red. Each orb has its own musical personalities and effects.
 
-Blue Orb (Sine Wave) 		- Soft, pure tones with reverent effects.
+Blue Orb (Sine Wave) 		- Soft, pure tones with reverberant effects.
 Purple Orb (Sawtooth Wave) 	- Bright, clear tones with tremolo effects.
 Red Orb (Triangle Wave)		- Warm, saturated tones with delay effects.
 
@@ -39,13 +39,13 @@ Try to find all the effect combos to take your soundscapes to the next level!
 
 OTHER FEATURES:
 
-The control panel contains all of the changeable settings for the sandbox including:
+The control panel contains all of the settings for the sandbox, including:
 	- Orb type selection.
 	- Volume control.
-	- Pentatonic key control.
-	- 'Black Hole' mode.
+	- Pentatonic key selection.
+	- Black hole physics toggle.
 
-Circles includes a step-by-step inbuilt tutorial that can be toggled in the main menu to help guide you through all the controls needed to get you going. In addition, a quick help overlay can be viewed by tapping the '?' symbol in the top right corner.
+Circles includes a step-by-step inbuilt tutorial that can be toggled from the main menu to help guide you through all the controls needed to get you going. In addition, a quick help overlay can be viewed by tapping the '?' symbol in the top right corner of the sandbox.
 
 
 *** SKU Number ***
@@ -83,7 +83,7 @@ Games / Music
 
 *** Keywords ***
 
-Interactive, Sandbox, Mediation, Mind, Mental, Health, Relax, Calm, Music, Audio, Ambient, Soundscape, Environment, Education, Gravity, Shapes, Orbs, Synths, Physics,
+Interactive, Sandbox, Mediation, Mind, Mental, Health, Relax, Calm, Music, Audio, Ambient, Soundscape, Environment, Education, Gravity, Shapes, Orbs, Synths, Physics, Tutorial.
 
 
 *** App Rating ***

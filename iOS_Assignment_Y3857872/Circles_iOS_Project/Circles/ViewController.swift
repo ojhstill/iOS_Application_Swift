@@ -27,6 +27,8 @@ class ViewController: UIViewController {
             // Load the SKScene from 'MenuScene.sks'
             if let mainMenu = SKScene(fileNamed: "MenuScene") {
                 
+                mainMenu.scaleMode = .aspectFit
+                
                 // Present the application main menu.
                 view.presentScene(mainMenu)
                 
@@ -38,7 +40,7 @@ class ViewController: UIViewController {
                 scene!.viewController = self
             }
             
-            // DEBUG TOOLS:
+            // * DEBUG TOOLS *
             view.ignoresSiblingOrder = true
             view.showsFPS = false
             view.showsNodeCount = false

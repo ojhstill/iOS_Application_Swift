@@ -34,23 +34,30 @@ class TutorialScene {
                                 1 : "THIS TUTORIAL WILL GUIDE YOU THROUGH ALL THE CONTROLS NEEDED TO PRODUCE YOUR OWN UNIQUE AMBIENT SOUNDSCAPES.",
                                 2 : "IN THE CENTRE IS AN ORB.\n THESE HAVE SPECIAL PROPERTIES, AND ARE THE BUILDING BLOCKS OF YOUR SOUNDS.",
                                 3 : "ORBS ARE EFFECTED BY GRAVITY.\n TRY TILTLING THE SCREEN TO MOVE THE ORB AROUND...",
+                                4 : "", // (User Prompt)
                                 5 : "GREAT!\n NOW LET'S ADD ANOTHER ORB.",
                                 6 : "PINCH AND HOLD ON THE SCREEN TO CREATE AN ORB.\n YOU CAN RESIZE BY ADJUSTING YOUR PINCH...",
+                                7 : "", // (User Prompt)
                                 8 : "PERFECT! ORBS ALSO HAVE THEIR OWN SOUNDS AND EFFECTS.",
-                                9 : "TILT THE SCREEN TO MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
+                                9 : "TILT THE SCREEN AND MAKE THE ORBS COLLIDE TO HEAR WHAT HAPPENS... ",
+                                10: "", // (User Prompt)
                                 11: "WOAH!\n HEAR THAT?",
                                 12: "THE SIZE OF EACH ORB WILL CHANGE THE OCTAVE RANGE.\n THE LARGER THE ORB, THE LOWER THE OCTAVE RANGE",
                                 13: "THE IMPACT OF THE COLLISION ALSO EFFECTS THE LOUDNESS OF THE SOUND.",
                                 14: "AT THE BOTTOM OF THE SCREEN IS A SETTINGS ICON.",
                                 15: "YOU CAN CHANGE A VARIETY OF SETTINGS BY TAPPING ON THE ICON TO DISPLAY A CONTROL PANEL.",
                                 16: "LET'S CHANGE THE TYPE OF ORB.\n TAP THE ICON IN THE BOTTOM RIGHT CORNER OF THE SCREEN...",
+                                17: "", // (User Prompt)
                                 18: "THERE ARE THREE DIFFERENT TYPES OF ORBS TO CHOOSE FROM.",
                                 19: "SELECT A DIFFERENT ORB AND ADD IT TO THE SANDBOX...",
+                                20: "", // (User Prompt)
                                 21: "AMAZING!\n NOW LET'S MAKE THEM COLLIDE AGAIN...",
+                                22: "", // (User Prompt)
                                 23: "NOTICE THE DIFFERENT SOUND THAT THE ORB PRODUCES?",
                                 24: "DEPENDING ON THE TYPE OF ORBS THAT IT COLLDIES WITH, THE EFFECTS OF THE SOUND WILL CHANGE.",
                                 25: "USE THIS FEATURE TO CREATE UNIQUE AND EVOLVING SOUNDSCPAES!",
                                 26: "TO REMOVE AN ORB, DOUBLE TAP ON THE ORB YOU WANT TO REMOVE. TRY REMOVING SOME OF THE ORBS ON THE SCREEN...",
+                                27: "", // (User Prompt)
                                 28: "YOU'RE GREAT AT THIS!",
                                 29: "YOU CAN ALSO CHANGE THE PENTATONIC KEY AND THE VOLUME OF THE SOUNDSCAPE FROM WITHIN THE CONTROL PANEL.",
                                 30: "IF YOU NEED HELP AT ANY POINT, YOU CAN TAP THE HELP ICON AT THE TOP RIGHT CORNER OF THE SCREEN.",
@@ -98,7 +105,7 @@ class TutorialScene {
     
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * PUBLIC CLASS FUNCTIONS * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-    // Called after each frame update within the SandboxScene update() protocol.
+    // Called after each frame update within the SandboxScene update() protocol:
     public func update() {
         waitForUser(at: sequenceState)
     }

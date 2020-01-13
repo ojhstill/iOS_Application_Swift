@@ -60,9 +60,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
 
     override func didMove(to view: SKView) {
         
-        // Set the scale mode to scale to fit the SKView.
-        self.scaleMode = .resizeFill
-        
         // Setup the physics world properties and user interaction.
         self.physicsWorld.contactDelegate = self
         self.isUserInteractionEnabled = true
@@ -108,8 +105,12 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         // Initalise the sandbox node's class varibles.
         orbSelected = "blue"
         
+        // Setup all class vairbles relating to orbs.
         orbProperties = (CGPoint(x: 0.0, y: 0.0), CGSize(width: 0.0, height: 0.0))
         orbArray = [Orb]()
+        orbArray.reserveCapacity(16)
+        
+        print("MIN CAP: \(orbArray.capacity)")
         
         orbCollision = false
         panelActive = false
@@ -122,11 +123,11 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         startingOrb.physicsBody = SKPhysicsBody(circleOfRadius: 150)
         spawnOrb(orb: startingOrb)
         orbArray.append(startingOrb)
-        sandboxParentNode.addChild(orbArray[orbArray.count - 1])
+        sandboxParentNode.addChild(orbArray.last!)
         startingOrb.orbSynth.connectOrbSynthOutput(to: audioManager.mixer)
         
         // Create volume slider and add to view controller.
-        volSlider = UISlider(frame: CGRect(x: 30, y: 1040, width: 150, height: 100))
+        volSlider = UISlider(frame: CGRect(x: 30 * (view.frame.width/768), y: view.frame.height + (16 * (view.frame.height/1024)), width: 150, height: 100))
         volSlider.minimumValue = 0
         volSlider.maximumValue = 1
         volSlider.value = 1
@@ -134,13 +135,13 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         viewController.view?.addSubview(volSlider)
         
         // Create key picker and add to view controller.
-        keyPicker = UIPickerView(frame: CGRect(x: 30, y: 1115, width: 150, height: 100))
+        keyPicker = UIPickerView(frame: CGRect(x: 30 * (view.frame.width/768), y: view.frame.height + (91 * (view.frame.height/1024)), width: 150, height: 100))
         keyPicker.delegate = self
         keyPicker.dataSource = self
         keyPicker.backgroundColor = .clear
         viewController.view?.addSubview(keyPicker)
         
-        // Set key defaults.
+        // Set default key 'Cmaj'.
         keyRoot = "C"
         keyTonality = "maj"
         
@@ -185,7 +186,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             popOutCA.fillMode = .forwards
             popOutCA.timingFunction = CAMediaTimingFunction(name: .linear)
             popOutCA.duration = 0.3
-            popOutCA.byValue = CGAffineTransform(translationX: 0, y: 200)
+            popOutCA.byValue = CGAffineTransform(translationX: 0, y: (200 * (view!.frame.height/1024)))
             
             // Run animations.
             panelParentNode.run(popOutSK)
@@ -193,8 +194,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             keyPicker.layer.add(popOutCA, forKey: "transform")
             
             // Update the position of the UIKit elements.
-            volSlider.transform.ty += 200
-            keyPicker.transform.ty += 200
+            volSlider.transform.ty += (200 * (view!.frame.height/1024))
+            keyPicker.transform.ty += (200 * (view!.frame.height/1024))
             
             panelActive = false
         }
@@ -208,7 +209,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             popInCA.fillMode = .forwards
             popInCA.timingFunction = CAMediaTimingFunction(name: .linear)
             popInCA.duration = 0.3
-            popInCA.byValue = CGAffineTransform(translationX: 0, y: -200)
+            popInCA.byValue = CGAffineTransform(translationX: 0, y: (-200 * (view!.frame.height/1024)))
             
             // Run animations.
             panelParentNode.run(popInSK)
@@ -216,8 +217,8 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             keyPicker.layer.add(popInCA, forKey: "transform")
             
             // Update the position of the UIKit elements.
-            volSlider.transform.ty -= 200
-            keyPicker.transform.ty -= 200
+            volSlider.transform.ty -= (200 * (view!.frame.height/1024))
+            keyPicker.transform.ty -= (200 * (view!.frame.height/1024))
             
             panelActive = true
         }
@@ -233,7 +234,6 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         // Disable user gestures while tutorial is active and you have not reached the add orb tutorial prompt.
         if tutorialIsActive {
             if tutorialOverlayActive || tutorialSequenceState < 6 {
-                pinch.state = .cancelled
                 return
             }
         }
@@ -278,48 +278,49 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
                 
                 // Add new dynamic orb to scene and the orb array.
                 orbArray.append(newOrb)
-                sandboxParentNode.addChild(orbArray[orbArray.count - 1])
+                sandboxParentNode.addChild(orbArray.last!)
                 
                 // Give the orb a unique lighting bit mask to ensure light sources do not constructively interfere.
                 newOrb.lightingBitMask = UInt32(pow(2, Double(orbArray!.count)))
                 newOrb.lightNode.categoryBitMask = UInt32(pow(2, Double(orbArray!.count)))
             }
-            else {
-                // ... (else cancel the orb).
-                pinch.state = .cancelled
-            }
+            // ... else cancel the orb if two touch points are no longer detected.
+            else { pinch.state = .cancelled }
         }
         
-        let newOrb = orbArray[orbArray.count - 1]
+        // Take the newly added orb
+        if let newOrb = orbArray.last {
         
-        if pinch.state == .changed {
-            newOrb.position = orbProperties.pos
-            newOrb.size = orbProperties.size
-        }
-        
-        if pinch.state == .ended {
-            
-            if orbArray.count <= 15 {
+            // If the user changes the size or location of their pinch gesture, ...
+            if pinch.state == .changed {
                 
-                spawnOrb(orb: newOrb)
-                
-                orbAdded = true
-                
-                print("[SandboxScene.swift] Orb spawned at (x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y))) of size: \(Int(newOrb.size.width)).")
-            }
-            else {
-                removeOrb(orb: newOrb, index: orbArray.count - 1)
-                
-                // ... (else cancel the orb).
-                pinch.state = .cancelled
+                // ... update the orb's size and location properties
+                newOrb.position = orbProperties.pos
+                newOrb.size = orbProperties.size
             }
             
-            
-        }
+            // If the user releases their pinch gesture from the screen, ...
+            if pinch.state == .ended {
+                
+                // ... make sure newly added orb does not go over the capacity, ...
+                if orbArray.count < orbArray.capacity {
+                    
+                    // ... and spawn the new orb to the sandbox.
+                    spawnOrb(orb: newOrb)
+                    
+                    orbAdded = true
+                    
+                    print("[SandboxScene.swift] Orb spawned at (x: \(Int(newOrb.position.x)), y: \(Int(newOrb.position.y))) of size: \(Int(newOrb.size.width)).")
+                }
+                else {
+                    // ... (else cancel the orb if capacity has been met).
+                    removeOrb(orb: newOrb, index: orbArray.count - 1)
+                    
+                    pinch.state = .cancelled
+                }
+            }
         
-        if pinch.state == .cancelled {
-            
-            print("[SandboxScene.swift] Orb cancelled.")
+            if pinch.state == .cancelled { print("[SandboxScene.swift] Orb cancelled.") }
         }
     }
     
@@ -496,7 +497,7 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
             // ... update the frame in each orb.
             updateKey()
             
-            // * Note from Developer *
+            // * NOTE FROM DEVELOPER *
             // - This feature been implemented to help with an AudioKit bug where the orb synths will stop playing after a number of collisions.
             // - It was found that reseting the synth note array helped, but did not fix the issue.
             // - This bug is to be removed in a future update patch.
@@ -629,6 +630,9 @@ class SandboxScene: SKScene, SKPhysicsContactDelegate, UIPickerViewDelegate, UIP
         
         // Load the SKScene from 'MenuScene.sks'
         if let menuScene = MenuScene(fileNamed: "MenuScene") {
+            
+            // Set the scale mode to scale and fit the SKView.
+            menuScene.scaleMode = .aspectFit
             
             // Assign weak storage of sandboxScene inside the viewController.
             viewController.setCurrentScene(to: menuScene)

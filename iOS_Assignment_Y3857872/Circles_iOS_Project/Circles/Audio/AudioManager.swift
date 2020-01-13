@@ -64,5 +64,4 @@ open class AudioManager {
     public func setVolume(to volume: Double) {
         mixer.volume = volume
     }
-    
 }

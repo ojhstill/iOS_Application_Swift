@@ -23,9 +23,6 @@ class MenuScene: SKScene {
 
     override func didMove(to view: SKView) {
         
-        // Set the scale mode to scale to fit the SKView.
-        self.scaleMode = .resizeFill
-        
         // Initialise tutorialActive boolean to false.
         tutorialActive = false
         
@@ -88,6 +85,9 @@ class MenuScene: SKScene {
             
         // Load the SKScene from 'SandboxScene.sks'
         if let sandboxScene = SandboxScene(fileNamed: "SandboxScene") {
+            
+            // Set the scale mode to scale and fit the SKView.
+            sandboxScene.scaleMode = .aspectFit
             
             // Assign weak storage of sandboxScene inside the viewController.
             viewController.setCurrentScene(to: sandboxScene)
